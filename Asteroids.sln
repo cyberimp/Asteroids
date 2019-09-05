@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsteroidsEngine", "AsteroidsEngine\AsteroidsEngine.csproj", "{DCFCCBE6-6530-48B5-A46E-DCE68C530CD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsteroidsApp", "AsteroidsApp\AsteroidsApp.csproj", "{C3AFFB35-C409-40EC-93C9-3EC5A195B6EA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCFCCBE6-6530-48B5-A46E-DCE68C530CD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCFCCBE6-6530-48B5-A46E-DCE68C530CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCFCCBE6-6530-48B5-A46E-DCE68C530CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCFCCBE6-6530-48B5-A46E-DCE68C530CD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3AFFB35-C409-40EC-93C9-3EC5A195B6EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3AFFB35-C409-40EC-93C9-3EC5A195B6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3AFFB35-C409-40EC-93C9-3EC5A195B6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3AFFB35-C409-40EC-93C9-3EC5A195B6EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

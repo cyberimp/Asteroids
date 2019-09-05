@@ -1,0 +1,75 @@
+﻿@startuml
+
+class Entity{
+    -EntityComponent[] _components
+    -float _hitboxSquareRadius
+    -_layer
+    -_tag
+    ..transformations..
+    -Vector2 _position
+    -float _scale
+    -float _rotation
+    ..speeds..
+    -Vector2 _velocity
+    -float _rotationVelocity
+    ..state..
+    -bool _active
+    --
+    +void Render()
+    +void Update(float delta)
+    +void setActive(bool state)
+    +bool Collide(Entity)
+}
+
+Entity *- EntityComponent
+
+abstract class EntityComponent{
+    -bool _active
+    {abstract} +void render(Entity)
+    {abstract} +void update(Entity, delta)  
+}
+
+EntityComponent <|-- RenderComponent
+EntityComponent <|- ControlComponent
+
+class ControlComponent{
+    -Key[] binds
+    +update(Entity, delta)
+}
+
+ParticleComponent --|> EntityComponent
+
+class ParticleComponent{
+  
+}
+
+EntityComponent<|--AIComponent
+
+class AIComponent{
+    -_target
+    +void Update(Entity, delta)
+}
+
+Particle o- ParticlePool
+
+class Particle{
+    -Vector2 _position
+    -Vector2 _velocity
+    -_lifetime
+    +void Render()
+    +void Update()
+}
+
+class ParticlePool{
+    -Particle[] _collection
+    +ActivateParticle(Vector2 position, Vector2 velocity)
+}
+
+EntityPool *- Entity
+
+class EntityPool{
+    -Entity[] _collection
+    +Entity FindWithComponent(Type)
+}
+
+@enduml
