@@ -24,26 +24,32 @@ class Entity{
 Entity *- EntityComponent
 
 abstract class EntityComponent{
-    -bool _active
-    {abstract} +void render(Entity)
-    {abstract} +void update(Entity, delta)  
+    +bool Active
+    {abstract} +void Render(Entity)
+    {abstract} +void Update(Entity, delta)  
 }
 
 EntityComponent <|-- RenderComponent
-EntityComponent <|- ControlComponent
+EntityComponent <|-- ControlComponent
+EntityComponent <|-- DecayComponent
 
 class ControlComponent{
     -Key[] binds
     +update(Entity, delta)
 }
 
-ParticleComponent --|> EntityComponent
+class DecayComponent{
+    -float _lifetime
+    +update(Entity, delta)
+}
 
-class ParticleComponent{
+ParticleGeneratorComponent --|> EntityComponent
+
+class ParticleGeneratorComponent{
   
 }
 
-EntityComponent<|--AIComponent
+EntityComponent <|-- AIComponent
 
 class AIComponent{
     -_target

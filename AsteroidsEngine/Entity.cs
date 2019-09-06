@@ -1,16 +1,21 @@
-﻿namespace AsteroidsEngine
+﻿using OpenTK;
+
+namespace AsteroidsEngine
 {
     public class Entity
     {
-        private float _x = 0;
-        private float _y = 0;
-        private float _vx = 0;
-        private float _vy = 0;
+        private Vector2 Position { get; set; }
+        private Vector2 Velocity { get; set; }
 
-        public virtual void Update(uint delta)
+        public Entity(Vector2 position)
         {
-            _x += _vx * delta;
-            _y += _vy * delta;
+            Position = position;
+            Velocity = Vector2.Zero;
+        }
+
+        public virtual void Update(float delta)
+        {
+            Position += Velocity * delta;
         }
 
         public virtual void Render()
