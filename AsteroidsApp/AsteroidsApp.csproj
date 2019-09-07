@@ -9,4 +9,13 @@
       <ProjectReference Include="..\AsteroidsEngine\AsteroidsEngine.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="asteroids.png" />
+      <EmbeddedResource Include="asteroids.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />
+    </ItemGroup>
+
 </Project>

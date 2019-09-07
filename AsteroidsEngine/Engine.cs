@@ -32,10 +32,7 @@ namespace AsteroidsEngine
 
         private int VertexBufferObject;
         private int VertexArrayObject;
-        private readonly float[] vertices = {
-            -0.5f, -0.5f, 0.0f, //Bottom-left vertex
-            0.5f, -0.5f, 0.0f, //Bottom-right vertex
-            0.0f,  0.5f, 0.0f  //Top vertex
+        private readonly float[] vertices = {0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, 0.5f
         };
 
         protected override void OnLoad(EventArgs e)
@@ -58,7 +55,7 @@ namespace AsteroidsEngine
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 // 3. then set our vertex attributes pointers
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, sizeof(float)*2, 0);
             GL.EnableVertexAttribArray(0);
             
             GL.Enable(EnableCap.LineSmooth);
@@ -92,7 +89,7 @@ namespace AsteroidsEngine
 
             shader.Use();
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
             
             
             SwapBuffers();
