@@ -8,4 +8,15 @@
       <PackageReference Include="OpenTK.NetStandard" Version="1.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="shader.vert" />
+      <EmbeddedResource Include="shader.vert">
+        <DependentUpon>Resources.resx</DependentUpon>
+      </EmbeddedResource>
+      <None Remove="shader.frag" />
+      <EmbeddedResource Include="shader.frag">
+        <DependentUpon>Resources.resx</DependentUpon>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>

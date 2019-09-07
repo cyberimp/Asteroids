@@ -5,7 +5,7 @@
         
         
         
-        public override void Render(Entity entity, float delta)
+        public override void Render(Entity entity)
         {
         }
 

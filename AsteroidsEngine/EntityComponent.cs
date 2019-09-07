@@ -4,7 +4,7 @@
     {
         private bool Active { get; set; }
         
-        public abstract void Render(Entity entity, float delta);
+        public abstract void Render(Entity entity);
         public abstract void Update(Entity entity, float delta);
 
     }
