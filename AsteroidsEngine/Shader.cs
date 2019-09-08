@@ -71,6 +71,11 @@ namespace AsteroidsEngine
             GL.UseProgram(_handle);
         }
 
+        public int GetAttribLocation(string name)
+        {
+            return GL.GetAttribLocation(_handle, name);
+        }
+
         #region Disposing Methods
 
         private bool _disposedValue;

@@ -11,7 +11,6 @@
 
     <ItemGroup>
       <None Remove="asteroids.png" />
-      <EmbeddedResource Include="asteroids.png" />
     </ItemGroup>
 
     <ItemGroup>
