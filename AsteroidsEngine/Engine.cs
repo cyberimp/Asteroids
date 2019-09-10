@@ -11,7 +11,7 @@ namespace AsteroidsEngine
         private const int DefaultXRes = 800;
         private const int DefaultYRes = 600;
         private const string AppName = "ASTEROIDS";
-        private readonly Color backColor;
+        private readonly Color _backColor;
 
         private LinkedList<Entity> _entities;
 
@@ -25,7 +25,7 @@ namespace AsteroidsEngine
         {
             _entities = new LinkedList<Entity>();
             _settings = new EngineSettings(xRes, yRes);
-            backColor = Color.FromArgb(255, 13, 8, 13);//Eroge Copper Black
+            _backColor = Color.FromArgb(255, 13, 8, 13);//Eroge Copper Black
         }
 
         public void CreatePlayer()
@@ -33,63 +33,21 @@ namespace AsteroidsEngine
             _entities.AddLast(new Entity(Vector2.Zero));
         }
 
-        private int _vertexBufferObject;
-        private int _vertexArrayObject;
-        private int _elementBufferObject;
-        private readonly float[] _vertices =
-        {
-            //Position          Texture coordinates
-            0.5f,  0.5f, 0.0f, 0.0f, 0.0f, // top right
-            0.5f, -0.5f, 0.0f, 0.0f, 0.5f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.5f, 0.5f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.5f, 0.0f  // top left
-        };
-        
-        uint[] _indices = {  // note that we start from 0!
-            0, 1, 3,   // first triangle
-            1, 2, 3    // second triangle
-        };
 
         protected override void OnLoad(EventArgs e)
         {
-            GL.ClearColor(backColor);
-
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
-
-            _elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
+            GL.ClearColor(_backColor);
 
 
-            // The shaders have been modified to include the texture coordinates, check them out after finishing the OnLoad function.
             _shader = new Shader("shader.vert", "shader.frag");
+            ServiceLocator.SetShader(_shader);
             _shader.Use();
 
 
             _texture = new Texture("asteroids.png");
+            ServiceLocator.SetTexture(_texture);
             _texture.Use();
             
-            _vertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArrayObject);
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-
-            // Because there's now 5 floats between the start of the first vertex and the start of the second,
-            // we modify this from 3 * sizeof(float) to 5 * sizeof(float).
-            // This will now pass the new vertex array to the buffer.
-            var vertexLocation = _shader.GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-
-            // Next, we also setup texture coordinates. It works in much the same way.
-            // We add an offset of 3, since the first vertex coordinate comes after the first vertex
-            // and change the amount of data to 2 because there's only 2 floats for vertex coordinates
-            var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
@@ -99,8 +57,9 @@ namespace AsteroidsEngine
         protected override void OnUnload(EventArgs e)
         {
             _shader.Dispose();
+            _texture.Dispose();
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.DeleteBuffer(_vertexBufferObject);
+          
             base.OnUnload(e);
         }
 
@@ -114,12 +73,24 @@ namespace AsteroidsEngine
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            GL.BindVertexArray(_vertexArrayObject);
+
 
             _texture.Use();
             _shader.Use();
+            
+            Matrix4 v =Matrix4.CreateScale(0.150f,0.200f,1.0f);
+            _shader.SetMatrix4("transform",v);
+   
+            _texture.RenderQuad(0);
 
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            
+           // v = Matrix4.CreateRotationZ(45.0f);
+           // GL.UniformMatrix4(transform,true,ref v);
+            v =  Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(45f)) * Matrix4.CreateTranslation(1f,0.0f,0.0f)
+                * Matrix4.CreateScale(0.150f,0.200f,1.0f);
+            _shader.SetMatrix4("transform",v);
+            
+            _texture.RenderQuad(1);
 
             SwapBuffers();
             base.OnRenderFrame(e);
@@ -132,6 +103,11 @@ namespace AsteroidsEngine
             {
                 entity.Update((float) e.Time);
             }
+        }
+
+        public void SetTranslationMatrix(Matrix4 trans)
+        {
+            _shader.SetMatrix4("transform", trans);
         }
     }
 }

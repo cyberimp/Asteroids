@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
 namespace AsteroidsEngine
 {
@@ -10,7 +9,12 @@ namespace AsteroidsEngine
         public Vector2 Position { get; set; }
         public Vector2 Velocity { get; set; }
         public float Scale { get; set; }
+        
+        public float Rotation { get; set; }
         public bool Active { get; set; }
+
+        private Matrix4 transMatrix;
+        
 
         public Entity(Vector2 position)
         {
@@ -22,6 +26,14 @@ namespace AsteroidsEngine
 
         }
 
+        private void UpdateMatrix()
+        {
+            transMatrix = Matrix4.Identity * Matrix4.CreateScale(0.2f,0.15f,1.0f) * 
+                          Matrix4.CreateScale(Scale) * 
+                          Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation)) *
+                          Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
+        }
+
         public virtual void Update(float delta)
         {
             if (!Active) return;
@@ -30,14 +42,13 @@ namespace AsteroidsEngine
             {
                 component.Update(this, delta);
             }
+            UpdateMatrix();
         }
 
         public virtual void Render()
         {
             if (!Active) return;
-            GL.LoadIdentity();
-            GL.Translate(new Vector3(Position));
-            GL.Scale(Vector3.One*Scale);
+            ServiceLocator.GetShader().SetMatrix4("translation", transMatrix);
             foreach (var component in _components)
             {
                 component.Render(this);

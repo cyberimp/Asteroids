@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace AsteroidsEngine
 {
     public class Shader:IDisposable
     {
-        private readonly int _handle;
+        public readonly int Handle;
+
+        private readonly Dictionary<string, int> _uniformLocations;
 
         
         public Shader(string vertexPath, string fragmentPath)
@@ -52,28 +56,52 @@ namespace AsteroidsEngine
             if (infoLogFrag != string.Empty)
                 Console.WriteLine(infoLogFrag);
             
-            _handle = GL.CreateProgram();
+            Handle = GL.CreateProgram();
 
-            GL.AttachShader(_handle, vertexShader);
-            GL.AttachShader(_handle, fragmentShader);
+            GL.AttachShader(Handle, vertexShader);
+            GL.AttachShader(Handle, fragmentShader);
 
-            GL.LinkProgram(_handle);
+            GL.LinkProgram(Handle);
             
             
-            GL.DetachShader(_handle, vertexShader);
-            GL.DetachShader(_handle, fragmentShader);
+            GL.DetachShader(Handle, vertexShader);
+            GL.DetachShader(Handle, fragmentShader);
             GL.DeleteShader(fragmentShader);
             GL.DeleteShader(vertexShader);
+            
+            GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+            
+            // Next, allocate the dictionary to hold the locations.
+            _uniformLocations = new Dictionary<string, int>();
+
+            // Loop over all the uniforms,
+            for (var i = 0; i < numberOfUniforms; i++)
+            {
+                // get the name of this uniform,
+                var key = GL.GetActiveUniform(Handle, i, out _, out _);
+
+                // get the location,
+                var location = GL.GetUniformLocation(Handle, key);
+                
+                // and then add it to the dictionary.
+                _uniformLocations.Add(key, location);
+            }
         }
         
         public void Use()
         {
-            GL.UseProgram(_handle);
+            GL.UseProgram(Handle);
         }
 
         public int GetAttribLocation(string name)
         {
-            return GL.GetAttribLocation(_handle, name);
+            return GL.GetAttribLocation(Handle, name);
+        }
+        
+        public void SetMatrix4(string name, Matrix4 data)
+        {
+            GL.UseProgram(Handle);
+            GL.UniformMatrix4(_uniformLocations[name], true, ref data);
         }
 
         #region Disposing Methods
@@ -84,14 +112,14 @@ namespace AsteroidsEngine
         {
             if (_disposedValue) return;
             
-            GL.DeleteProgram(_handle);
+            GL.DeleteProgram(Handle);
 
             _disposedValue = true;
         }
 
         ~Shader()
         {
-            GL.DeleteProgram(_handle);
+            GL.DeleteProgram(Handle);
         }
 
 
