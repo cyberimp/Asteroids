@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
 namespace AsteroidsEngine
 {
@@ -28,9 +29,14 @@ namespace AsteroidsEngine
             _backColor = Color.FromArgb(255, 13, 8, 13);//Eroge Copper Black
         }
 
-        public void CreatePlayer()
+        public Entity CreatePlayer()
         {
-            _entities.AddLast(new Entity(Vector2.Zero));
+            var playerEntity = new Entity(Vector2.Zero);
+            var renderComponent = new RenderComponent();
+            playerEntity.AddComponent(renderComponent);
+            playerEntity.AddComponent(new PlayerComponent());
+            _entities.AddLast(playerEntity);
+            return playerEntity;
         }
 
 
@@ -51,6 +57,8 @@ namespace AsteroidsEngine
             
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
+
+            CreatePlayer();
             base.OnLoad(e);
         }
 
@@ -78,19 +86,12 @@ namespace AsteroidsEngine
             _texture.Use();
             _shader.Use();
             
-            Matrix4 v =Matrix4.CreateScale(0.150f,0.200f,1.0f);
-            _shader.SetMatrix4("transform",v);
-   
-            _texture.RenderQuad(0);
+            foreach (var entity in _entities)
+            {
+                entity.Render();
+            }
 
             
-           // v = Matrix4.CreateRotationZ(45.0f);
-           // GL.UniformMatrix4(transform,true,ref v);
-            v =  Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(45f)) * Matrix4.CreateTranslation(1f,0.0f,0.0f)
-                * Matrix4.CreateScale(0.150f,0.200f,1.0f);
-            _shader.SetMatrix4("transform",v);
-            
-            _texture.RenderQuad(1);
 
             SwapBuffers();
             base.OnRenderFrame(e);
@@ -98,11 +99,48 @@ namespace AsteroidsEngine
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            base.OnUpdateFrame(e);
             foreach (var entity in _entities)
             {
                 entity.Update((float) e.Time);
             }
+            base.OnUpdateFrame(e);
+        }
+
+        protected override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            var controller = ServiceLocator.GetController();
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    Exit();
+                    break;
+                case Key.Left:
+                    controller.Rotation = -1;
+                    break;
+                case Key.Right:
+                    controller.Rotation = 1;
+                    break;
+            }
+            base.OnKeyDown(e);
+        }
+
+        protected override void OnKeyUp(KeyboardKeyEventArgs e)
+        {
+            var controller = ServiceLocator.GetController();
+            
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    Exit();
+                    break;
+                case Key.Left:
+                    controller.Rotation = 0;
+                    break;
+                case Key.Right:
+                    controller.Rotation = 0;
+                    break;
+            }
+            base.OnKeyDown(e);
         }
 
         public void SetTranslationMatrix(Matrix4 trans)

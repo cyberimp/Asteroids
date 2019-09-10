@@ -7,8 +7,9 @@ namespace AsteroidsEngine
         private static ServiceLocator _instance;
 
         private static Shader _shader;
-
         private static Texture _texture;
+        private static Engine _engine;
+        private static Controller _controller;
         
         private ServiceLocator(){}
         
@@ -42,8 +43,26 @@ namespace AsteroidsEngine
             GetInstance();
             return _texture ?? 
                    throw new Exception("Texture not initialized", 
-                       new NullReferenceException());;
+                       new NullReferenceException());
         }
         
+        public static void SetEngine(Engine engine)
+        {
+            GetInstance();
+            _engine = engine;
+        }
+
+        public static Engine GetEngine()
+        {
+            GetInstance();
+            return _engine ?? 
+                   throw new Exception("Engine not initialized", 
+                       new NullReferenceException());
+        }
+        public static Controller GetController()
+        {
+            GetInstance();
+            return _controller ?? (_controller = new Controller());
+        }
     }
 }

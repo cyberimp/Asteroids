@@ -28,7 +28,7 @@ namespace AsteroidsEngine
 
         private void UpdateMatrix()
         {
-            transMatrix = Matrix4.Identity * Matrix4.CreateScale(0.2f,0.15f,1.0f) * 
+            transMatrix = Matrix4.Identity * Matrix4.CreateScale(0.15f,0.2f,1.0f) * 
                           Matrix4.CreateScale(Scale) * 
                           Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation)) *
                           Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
@@ -48,11 +48,16 @@ namespace AsteroidsEngine
         public virtual void Render()
         {
             if (!Active) return;
-            ServiceLocator.GetShader().SetMatrix4("translation", transMatrix);
+            ServiceLocator.GetShader().SetMatrix4("transform", transMatrix);
             foreach (var component in _components)
             {
                 component.Render(this);
             }
+        }
+
+        public void AddComponent(EntityComponent component)
+        {
+            _components.AddLast(component);
         }
     }
 }

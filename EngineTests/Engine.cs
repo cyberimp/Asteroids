@@ -7,11 +7,9 @@ namespace EngineTests
     public class EntityTest
     {
         private Entity _entity;
-        private Engine _engine;
         [SetUp]
         public void Setup()
         {
-            _engine = new Engine();
             _entity = new Entity(Vector2.Zero);
         }
 
