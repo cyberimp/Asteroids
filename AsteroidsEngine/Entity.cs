@@ -28,7 +28,7 @@ namespace AsteroidsEngine
 
         private void UpdateMatrix()
         {
-            transMatrix = Matrix4.Identity * Matrix4.CreateScale(0.15f,0.2f,1.0f) * 
+            transMatrix = Matrix4.Identity * //Matrix4.CreateScale(0.15f,0.2f,1.0f) * 
                           Matrix4.CreateScale(Scale) * 
                           Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation)) *
                           Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);

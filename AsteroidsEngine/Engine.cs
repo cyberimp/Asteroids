@@ -9,7 +9,7 @@ namespace AsteroidsEngine
 {
     public class Engine : GameWindow
     {
-        private const int DefaultXRes = 800;
+        private const int DefaultXRes = 600;
         private const int DefaultYRes = 600;
         private const string AppName = "ASTEROIDS";
         private readonly Color _backColor;
@@ -32,9 +32,11 @@ namespace AsteroidsEngine
         public Entity CreatePlayer()
         {
             var playerEntity = new Entity(Vector2.Zero);
-            var renderComponent = new RenderComponent();
+            var renderComponent = new RenderComponent(13);
             playerEntity.AddComponent(renderComponent);
             playerEntity.AddComponent(new PlayerComponent());
+            playerEntity.AddComponent(new HyperDriveComponent());
+            playerEntity.Scale = 0.25f;
             _entities.AddLast(playerEntity);
             return playerEntity;
         }
@@ -43,14 +45,14 @@ namespace AsteroidsEngine
         protected override void OnLoad(EventArgs e)
         {
             GL.ClearColor(_backColor);
-
+            
 
             _shader = new Shader("shader.vert", "shader.frag");
             ServiceLocator.SetShader(_shader);
             _shader.Use();
 
 
-            _texture = new Texture("asteroids.png");
+            _texture = new Texture("atlas");
             ServiceLocator.SetTexture(_texture);
             _texture.Use();
             
@@ -120,6 +122,15 @@ namespace AsteroidsEngine
                 case Key.Right:
                     controller.Rotation = 1;
                     break;
+                case Key.Up:
+                    controller.Thrust = true;
+                    break;
+                case Key.Space:
+                    controller.Fire1 = true;
+                    break;
+                case Key.LControl:
+                    controller.Fire2 = true;
+                    break;
             }
             base.OnKeyDown(e);
         }
@@ -130,14 +141,20 @@ namespace AsteroidsEngine
             
             switch (e.Key)
             {
-                case Key.Escape:
-                    Exit();
-                    break;
                 case Key.Left:
                     controller.Rotation = 0;
                     break;
                 case Key.Right:
                     controller.Rotation = 0;
+                    break;
+                case Key.Up:
+                    controller.Thrust = false;
+                    break;
+                case Key.Space:
+                    controller.Fire1 = false;
+                    break;
+                case Key.LControl:
+                    controller.Fire2 = false;
                     break;
             }
             base.OnKeyDown(e);

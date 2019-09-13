@@ -1,0 +1,24 @@
+﻿#atlas divider config
+#this is comment
+#s - single quad
+#l - 4x1 banner
+#d - 2x2 sprite
+size:8x8
+0: s0,0
+1: s1,0
+2: s2,0
+3: s3,0
+4: s0,1
+5: s1,1
+6: s2,1
+7: s3,1
+8: s0,2
+9: s1,2
+skull: s2,2
+laser: s3,2
+score: l0,3
+banner: l0,4
+ship: d4,0
+ufo: d6,0
+asteroid: d4,2
+bullet: d6,2

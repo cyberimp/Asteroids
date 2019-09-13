@@ -19,6 +19,10 @@
       <EmbeddedResource Include="shader.frag">
         <DependentUpon>Resources.resx</DependentUpon>
       </EmbeddedResource>
+      <None Remove="atlas.txt" />
+      <EmbeddedResource Include="atlas.txt" />
+      <None Remove="atlas.png" />
+      <EmbeddedResource Include="atlas.png" />
     </ItemGroup>
 
 </Project>

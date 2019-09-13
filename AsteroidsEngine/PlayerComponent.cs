@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenTK.Input;
+using OpenTK;
 
 namespace AsteroidsEngine
 {
@@ -14,7 +14,17 @@ namespace AsteroidsEngine
         {
             var input = ServiceLocator.GetController();
 
-            entity.Rotation -= input.Rotation* 45f * delta;
+            entity.Rotation -= input.Rotation * 270f * delta;
+            if (input.Thrust)
+                entity.Velocity+= Vector2.Transform(Vector2.UnitY * .01f,
+                    Quaternion.FromEulerAngles(Vector3.UnitZ*
+                                               MathHelper.DegreesToRadians(entity.Rotation)));
+            
+            if (entity.Velocity.LengthSquared > 0.25f)
+                entity.Velocity = Vector2.Normalize(entity.Velocity) * 0.5f;
+            
+            if(input.Fire1)
+                Console.WriteLine(entity.Position);
         }
     }
 }

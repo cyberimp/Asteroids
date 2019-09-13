@@ -1,46 +1,37 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
-
+using Bitmap = System.Drawing.Bitmap;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace AsteroidsEngine
 {
    public class Texture:IDisposable
     {
-        public readonly int Handle;
+        private readonly int _handle;
         
         private int _vertexBufferObject;
         private int _vertexArrayObject;
         private int _elementBufferObject;
-        private readonly float[] _vertices =
-        {
-            //Position          Texture coordinates
-            0.5f,  0.5f, 0.0f, 0.0f, 0.0f, // top right
-            0.5f, -0.5f, 0.0f, 0.0f, 0.5f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.5f, 0.5f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.5f, 0.0f,  // top left
-            0.5f,  0.5f, 0.0f, 1f, 0.0f, // top right
-            0.5f, -0.5f, 0.0f, 1f, 0.5f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.5f, 0.5f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.5f, 0.0f  // top left
-        };
-        
-        uint[] _indices = {  // note that we start from 0!
-            0, 1, 3,   // first triangle
-            1, 2, 3,    // second triangle
-            4, 5, 7,
-            5, 6, 7
-        };
+        private float[] _vertices;
+        private uint[] _indices;
 
+        private List<string> _names; 
 
         // Create texture from path.
         public Texture(string path)
         {
+            _names = new List<string>();
+            GenIndices(path);
+                
             // Generate handle
-            Handle = GL.GenTexture();
+            _handle = GL.GenTexture();
 
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
@@ -50,7 +41,7 @@ namespace AsteroidsEngine
             // For this example, we're going to use .NET's built-in System.Drawing library to load textures.
 
             // Load the image
-            using (var stream = a.GetManifestResourceStream(myName + "." + path))
+            using (var stream = a.GetManifestResourceStream(myName + "." + path + ".png"))
             using (var image = new Bitmap(stream)) {
                 var data = image.LockBits(
                     new Rectangle(0, 0, image.Width, image.Height),
@@ -80,6 +71,96 @@ namespace AsteroidsEngine
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             InitBuffers();
+        }
+
+        private void GenIndices(string path)
+        {
+            var indices = new List<uint>();
+            uint firstIndex = 0;
+            uint[] indicesStencil = { 0,1,3,1,2,3 };
+            var vertices = new List<float>();
+            var a = Assembly.GetExecutingAssembly();
+            var myName = a.GetName().Name;
+            using (var stream = a.GetManifestResourceStream(myName + "." + path + ".txt"))
+            using (var reader = new StreamReader(stream ?? 
+                                                 throw new FileNotFoundException("atlas not found")))
+            {
+                var line = 0;
+                var s = reader.ReadLine();
+                ++line;
+                if (s == null) throw new FileLoadException("cannot read atlas");
+                while (s != null && s[0] == '#')
+                {
+                    s = reader.ReadLine();
+                    ++line;
+                }
+
+                if (s == null) throw new FileLoadException("cannot read atlas, line:"+line);
+                if (!s.StartsWith("size:"))
+                    throw new FileLoadException("cannot read atlas, line:"+line);
+                var nums = s.Substring(5).Split('x');
+                if (nums.Length < 2 )
+                    throw new FileLoadException("cannot read atlas, line:"+line);
+                var sizeX = 1.0f/int.Parse(nums[0]);    
+                var sizeY = 1.0f/int.Parse(nums[1]);
+                s = reader.ReadLine();
+                ++line;
+                while (!string.IsNullOrEmpty(s))
+                {
+                    var split = s.Split(":");
+                    var name = split[0];
+                    var size = split[1].Trim();
+
+                    var sizeType = size[0];
+                    var width = 1;
+                    var height = 1;
+
+                    switch (sizeType)
+                    {
+                    case 's':
+                        break;
+                    case 'l':
+                        width = 4;
+                        break;
+                    case 'd':
+                        width = 2;
+                        height = 2;
+                        break;
+                    default:
+                        throw new FileLoadException("cannot read atlas, line:"+line);
+                    }
+
+                    split = size.Substring(1).Split(',');
+                    var xcoord = int.Parse(split[0]);
+                    var ycoord = int.Parse(split[1]);
+
+                    //Clockwise generation  of quad coordinates
+                    for (var f = MathHelper.PiOver4; f > -MathHelper.ThreePiOver2; 
+                        f -= MathHelper.PiOver2)
+                    {
+                        vertices.Add(width*MathF.Sign(MathF.Cos(f)));
+                        vertices.Add(height*MathF.Sign(MathF.Sin(f)));
+                        vertices.Add(0.0f);
+                        vertices.Add(xcoord*sizeX+width*sizeX*
+                                     ((1.0f + MathF.Sign(MathF.Cos(f)))/2));
+                        vertices.Add(ycoord*sizeY+height*sizeY*
+                                     ((1.0f - MathF.Sign(MathF.Sin(f)))/2));
+
+                    }
+
+                    indices.AddRange(indicesStencil.Select(i => i + firstIndex));
+                    
+                    _names.Add(name);
+
+                    firstIndex += 4;
+                    
+                    s = reader.ReadLine();
+                    ++line;
+                }
+
+                _vertices = vertices.ToArray();
+                _indices = indices.ToArray();
+            }
         }
 
         private void InitBuffers()
@@ -117,13 +198,17 @@ namespace AsteroidsEngine
         public void Use(TextureUnit unit = TextureUnit.Texture0)
         {
             GL.ActiveTexture(unit);
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            GL.BindTexture(TextureTarget.Texture2D, _handle);
         }
 
+        public void RenderQuad(string name)
+        {
+            RenderQuad(_names.FindIndex(s => s == name));
+        }
         public void RenderQuad(int num)
         {
             GL.BindVertexArray(_vertexArrayObject);
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length/2, 
+            GL.DrawElements(PrimitiveType.Triangles, 6, 
                 DrawElementsType.UnsignedInt, num*6*sizeof(float));
         }
         
@@ -136,7 +221,7 @@ namespace AsteroidsEngine
             GL.DeleteBuffer(_vertexArrayObject);
             GL.DeleteBuffer(_vertexBufferObject);
             GL.DeleteBuffer(_elementBufferObject);
-            GL.DeleteTexture(Handle);
+            GL.DeleteTexture(_handle);
 
             _disposedValue = true;
         }
@@ -146,7 +231,7 @@ namespace AsteroidsEngine
             GL.DeleteBuffer(_vertexArrayObject);
             GL.DeleteBuffer(_vertexBufferObject);
             GL.DeleteBuffer(_elementBufferObject);
-            GL.DeleteTexture(Handle);
+            GL.DeleteTexture(_handle);
         }
 
 
