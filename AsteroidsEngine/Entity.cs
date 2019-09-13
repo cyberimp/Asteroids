@@ -12,8 +12,12 @@ namespace AsteroidsEngine
         
         public float Rotation { get; set; }
         public bool Active { get; set; }
+        
+        public float Timer { get; set; }
+        
+        public string Tag { get; set; }
 
-        private Matrix4 transMatrix;
+        private Matrix4 _transMatrix;
         
 
         public Entity(Vector2 position)
@@ -28,10 +32,9 @@ namespace AsteroidsEngine
 
         private void UpdateMatrix()
         {
-            transMatrix = Matrix4.Identity * //Matrix4.CreateScale(0.15f,0.2f,1.0f) * 
-                          Matrix4.CreateScale(Scale) * 
-                          Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation)) *
-                          Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
+            _transMatrix = Matrix4.CreateScale(Scale) * 
+                           Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation)) *
+                           Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
         }
 
         public virtual void Update(float delta)
@@ -48,7 +51,7 @@ namespace AsteroidsEngine
         public virtual void Render()
         {
             if (!Active) return;
-            ServiceLocator.GetShader().SetMatrix4("transform", transMatrix);
+            ServiceLocator.GetShader().SetMatrix4("transform", _transMatrix);
             foreach (var component in _components)
             {
                 component.Render(this);
