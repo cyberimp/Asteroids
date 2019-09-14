@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -21,69 +19,15 @@ namespace AsteroidsEngine
 
         private Shader _shader;
         private Texture _texture;
-
-        private List<Entity> _newEntities;
+        
 
         public Engine(int xRes = DefaultXRes, int yRes = DefaultYRes):
             base(xRes, yRes, GraphicsMode.Default, AppName, GameWindowFlags.FixedWindow)
         {
- 
-            _newEntities = new List<Entity>();
             _settings = new EngineSettings(xRes, yRes);
             _backColor = new Color4( 13, 8, 13,255);//Eroge Copper Black
         }
 
-//        public Entity CreatePlayer()
-//        {
-//            var playerEntity = new Entity(Vector2.Zero) {Scale = 0.05f, Tag = "player"};
-//            var renderComponent = new RenderComponent(14);
-//            playerEntity.SetRender(renderComponent);
-//            playerEntity.AddComponent(new PlayerComponent());
-//            playerEntity.AddComponent(new HyperDriveComponent());
-//            _entities.AddLast(playerEntity);
-//            return playerEntity;
-//        }
-//
-//        public Entity CreateAsteroid()
-//        {
-//            var asteroid = new Entity(Vector2.One*0.9f)
-//            {
-//                Scale = 0.25f, 
-//                Velocity = new Vector2(0.1f, 0.1f),
-//                Tag = "asteroid"
-//            };
-//            asteroid.AddComponent(new HyperDriveComponent());
-//            asteroid.SetRender(new RenderComponent(16));
-//            _newEntities.Add(asteroid);
-//            return asteroid;
-//        }
-//
-//        public Entity CreateBullet(Entity ship)
-//        {
-//            
-//            if (_bullet == null)
-//                _bullet = new RenderComponent(17);
-//
-//            var result = _entities.FirstOrDefault(
-//                entity => entity.Tag == "bullet" && !entity.Active);
-//            
-//            if (result == null)
-//            {
-//                result = new Entity(ship.Position) {Tag = "bullet", Scale = 0.005f};
-//                result.SetRender(_bullet);
-//                result.AddComponent(new DecayComponent());
-//                _newEntities.Add(result);
-//            }
-//
-//            result.Active = true;
-//            result.Timer = 0.5f;
-//            result.Position = ship.Position;
-//            result.Velocity = Vector2.Transform(Vector2.UnitY, 
-//                Quaternion.FromAxisAngle(Vector3.UnitZ, 
-//                    MathHelper.DegreesToRadians(ship.Rotation)));
-//            
-//            return result;
-//        }
 
 
         protected override void OnLoad(EventArgs e)
@@ -143,7 +87,13 @@ namespace AsteroidsEngine
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            _entities.Update((float) e.Time);            
+            _entities.Update((float) e.Time);
+            _entities.Collide("bullet","asteroid");
+            _entities.Collide("bullet","ufo");
+            _entities.Collide("laser","asteroid");
+            _entities.Collide("asteroid","ufo");
+            _entities.Collide("ufo","player");
+            _entities.Collide("asteroid","player");
             base.OnUpdateFrame(e);
         }
 

@@ -10,7 +10,6 @@
 
     <ItemGroup>
       <None Remove="shader.vert" />
-      <EmbeddedResource Include="asteroids.png" />
       <EmbeddedResource Include="shader.vert">
         <DependentUpon>Resources.resx</DependentUpon>
       </EmbeddedResource>
@@ -22,6 +21,24 @@
       <EmbeddedResource Include="atlas.txt" />
       <None Remove="atlas.png" />
       <EmbeddedResource Include="atlas.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="HyperDriveComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
+      </Compile>
+      <Compile Update="PlayerComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
+      </Compile>
+      <Compile Update="DecayComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
+      </Compile>
+      <Compile Update="BulletCollider.cs">
+        <DependentUpon>Collider.cs</DependentUpon>
+      </Compile>
+      <Compile Update="AsteroidCollider.cs">
+        <DependentUpon>Collider.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

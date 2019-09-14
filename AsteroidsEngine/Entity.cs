@@ -19,6 +19,8 @@ namespace AsteroidsEngine
         public string Tag { get; set; }
         public int ComponentsCount => _updateComponents.Count;
 
+        private ICollider _collider;
+
         private Matrix4 _transMatrix;
         
 
@@ -65,6 +67,16 @@ namespace AsteroidsEngine
         public void SetRender(RenderComponent component)
         {
             _render = component;
+        }
+
+        public void SetCollider(ICollider collider)
+        {
+            _collider = collider;
+        }
+
+        public void Collide(Entity entity2)
+        {
+            _collider?.OnCollide(this, entity2);
         }
     }
 }

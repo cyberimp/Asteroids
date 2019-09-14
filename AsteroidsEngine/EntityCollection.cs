@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 
@@ -11,14 +12,23 @@ namespace AsteroidsEngine
         private List<RenderComponent> _renders;
         private readonly List<Entity> _newCollection;
         private readonly Dictionary<string, UpdateComponent> _components;
+        private readonly Dictionary<string, ICollider> _colliders;
 
         public EntityCollection()
         {
             _collection = new LinkedList<Entity>();
             _newCollection = new List<Entity>();
             _components = new Dictionary<string, UpdateComponent>();
+            _colliders = new Dictionary<string, ICollider>();
             FillComponents();
+            FillColliders();
             FillRenders();
+        }
+
+        private void FillColliders()
+        {
+            AddCollider("bullet", new BulletCollider());
+            AddCollider("asteroid", new AsteroidCollider());
         }
 
         private void FillRenders()
@@ -47,6 +57,16 @@ namespace AsteroidsEngine
         private UpdateComponent GetComponent(string name)
         {
             return _components[name];
+        }
+        
+        private void AddCollider(string name, ICollider collider)
+        {
+            _colliders.Add(name, collider);
+        }
+
+        private ICollider GetCollider(string name)
+        {
+            return _colliders[name];
         }
 
         private Entity ReuseOrCreate(string tag, int render)
@@ -78,8 +98,14 @@ namespace AsteroidsEngine
         public Entity CreateAsteroid()
         {
             var asteroid = ReuseOrCreate("asteroid", 16);
-            if (asteroid.ComponentsCount == 0)
-                asteroid.AddComponent(GetComponent("hyper"));
+            asteroid.Scale = 0.1f;
+            asteroid.Position = -Vector2.UnitX * 0.8f;
+            asteroid.Velocity = Vector2.One*0.2f;
+            if (asteroid.ComponentsCount != 0) return asteroid;
+            
+            asteroid.AddComponent(GetComponent("hyper"));
+            asteroid.SetCollider(GetCollider("asteroid"));
+
             return asteroid;
         }
 
@@ -97,7 +123,8 @@ namespace AsteroidsEngine
             
             bullet.AddComponent(GetComponent("decay"));
             bullet.AddComponent(GetComponent("hyper"));
-
+            bullet.SetCollider(GetCollider("bullet"));
+            
             return bullet;
         }
 
@@ -146,6 +173,22 @@ namespace AsteroidsEngine
                 foreach (var entity in _collection.Where(entity => entity.Tag == tag))
                     entity.Render();
         }
-        
+
+        public void Collide(string tag1, string tag2)
+        {
+            foreach (var entity1 in _collection.Where(entity => entity.Tag == tag1 && entity.Active))
+            {
+                var cachePos = entity1.Position;
+                var cacheSize = entity1.Scale / 2;
+                foreach (var entity2 in _collection.Where(entity => entity.Tag == tag2 && entity.Active))
+                    if (Vector2.DistanceSquared(cachePos, entity2.Position) <
+                        (cacheSize + entity2.Scale / 2) * (cacheSize + entity2.Scale / 2))
+                    {
+                        entity1.Collide(entity2);
+                        entity2.Collide(entity1);
+                    }
+                        
+            }
+        }
     }
 }

@@ -13,8 +13,4 @@
       <None Remove="asteroids.png" />
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />
-    </ItemGroup>
-
 </Project>
