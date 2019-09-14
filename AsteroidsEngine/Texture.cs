@@ -240,5 +240,10 @@ namespace AsteroidsEngine
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        public int Length()
+        {
+            return _names.Count;
+        }
     }
 }

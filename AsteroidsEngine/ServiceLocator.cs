@@ -10,6 +10,7 @@ namespace AsteroidsEngine
         private static Texture _texture;
         private static Engine _engine;
         private static Controller _controller;
+        private static EntityCollection _entities;
         
         private ServiceLocator(){}
         
@@ -63,6 +64,21 @@ namespace AsteroidsEngine
         {
             GetInstance();
             return _controller ?? (_controller = new Controller());
+        }
+
+        public static void SetEntities(EntityCollection entities)
+        {
+            GetInstance();
+            _entities = entities;
+        }
+
+        public static EntityCollection GetEntities()
+        {
+            GetInstance();
+            return _entities ?? 
+                   throw new Exception("Entities collection not initialized", 
+                       new NullReferenceException());
+            
         }
     }
 }

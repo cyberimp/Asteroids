@@ -8,7 +8,7 @@ namespace AsteroidsApp
         static void Main(string[] args)
         {
             var engine = new Engine();
-            engine.Run();
+            engine.Run(60);
         }
     }
 }

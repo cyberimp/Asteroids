@@ -1,11 +1,7 @@
 ﻿namespace AsteroidsEngine
 {
-    public class DecayComponent:EntityComponent
+    public class DecayComponent:UpdateComponent
     {
-        public override void Render(Entity entity)
-        {
-        }
-
         public override void Update(Entity entity, float delta)
         {
             entity.Timer -= delta;

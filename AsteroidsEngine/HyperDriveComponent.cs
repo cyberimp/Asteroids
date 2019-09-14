@@ -2,13 +2,8 @@
 
 namespace AsteroidsEngine
 {
-    public class HyperDriveComponent:EntityComponent
+    public class HyperDriveComponent:UpdateComponent
     {
-        public override void Render(Entity entity)
-        {
-            //
-        }
-
         public override void Update(Entity entity, float delta)
         {
             var position = entity.Position;

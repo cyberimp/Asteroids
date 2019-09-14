@@ -1,6 +1,6 @@
 ﻿namespace AsteroidsEngine
 {
-    public class RenderComponent: EntityComponent
+    public class RenderComponent
     {
 
         private readonly Texture _texture;
@@ -12,13 +12,10 @@
             _quadNum = quadNum;
         }
         
-        public override void Render(Entity entity)
+        public virtual void Render(Entity entity)
         {
             _texture.RenderQuad(_quadNum);
         }
 
-        public override void Update(Entity entity, float delta)
-        {
-        }
     }
 }

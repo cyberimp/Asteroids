@@ -5,7 +5,8 @@ namespace AsteroidsEngine
 {
     public class Entity
     {
-        private LinkedList<EntityComponent> _components;
+        private LinkedList<UpdateComponent> _updateComponents;
+        private RenderComponent _render;
         public Vector2 Position { get; set; }
         public Vector2 Velocity { get; set; }
         public float Scale { get; set; }
@@ -16,13 +17,14 @@ namespace AsteroidsEngine
         public float Timer { get; set; }
         
         public string Tag { get; set; }
+        public int ComponentsCount => _updateComponents.Count;
 
         private Matrix4 _transMatrix;
         
 
         public Entity(Vector2 position)
         {
-            _components = new LinkedList<EntityComponent>();
+            _updateComponents = new LinkedList<UpdateComponent>();
             Active = true;
             Position = position;
             Velocity = Vector2.Zero;
@@ -41,7 +43,7 @@ namespace AsteroidsEngine
         {
             if (!Active) return;
             Position += Velocity * delta;
-            foreach (var component in _components)
+            foreach (var component in _updateComponents)
             {
                 component.Update(this, delta);
             }
@@ -52,15 +54,17 @@ namespace AsteroidsEngine
         {
             if (!Active) return;
             ServiceLocator.GetShader().SetMatrix4("transform", _transMatrix);
-            foreach (var component in _components)
-            {
-                component.Render(this);
-            }
+            _render.Render(this);
         }
 
-        public void AddComponent(EntityComponent component)
+        public void AddComponent(UpdateComponent component)
         {
-            _components.AddLast(component);
+            _updateComponents.AddLast(component);
+        }
+
+        public void SetRender(RenderComponent component)
+        {
+            _render = component;
         }
     }
 }
