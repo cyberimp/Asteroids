@@ -19,7 +19,8 @@ namespace AsteroidsEngine
 
         private Shader _shader;
         private Texture _texture;
-        
+        private bool _waitRestart;
+
 
         public Engine(int xRes = DefaultXRes, int yRes = DefaultYRes):
             base(xRes, yRes, GraphicsMode.Default, AppName, GameWindowFlags.FixedWindow)
@@ -120,6 +121,15 @@ namespace AsteroidsEngine
                 case Key.LControl:
                     controller.Fire2 = true;
                     break;
+                case Key.F:
+                    if (_waitRestart)
+                    {
+                        _entities.CleanUp();
+                        _entities.CreatePlayer();
+                        _waitRestart = false;
+                    }
+                    break;
+                        
             }
             base.OnKeyDown(e);
         }
@@ -149,5 +159,10 @@ namespace AsteroidsEngine
             base.OnKeyDown(e);
         }
 
+        public void GameOver()
+        {
+            _entities.CreateBanner();
+            _waitRestart = true;
+        }
     }
 }

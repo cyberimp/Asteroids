@@ -7,7 +7,8 @@ namespace AsteroidsEngine
 {
     public class EntityCollection
     {
-        private readonly string[] _renderTagOrder = {"","bullet","asteroid","ufo","laser","player"};
+        private readonly string[] _renderTagOrder = 
+            {"","bullet","asteroid","ufo","laser","player", "banner", "score"};
         private readonly LinkedList<Entity> _collection;
         private List<RenderComponent> _renders;
         private readonly List<Entity> _newCollection;
@@ -29,6 +30,7 @@ namespace AsteroidsEngine
         {
             AddCollider("bullet", new BulletCollider());
             AddCollider("asteroid", new AsteroidCollider());
+            AddCollider("ship", new ShipCollider());
         }
 
         private void FillRenders()
@@ -87,10 +89,14 @@ namespace AsteroidsEngine
         public Entity CreatePlayer()
         {
             var player = ReuseOrCreate("player", 14);
+            player.Position = Vector2.Zero;
+            player.Velocity = Vector2.Zero;
+            player.Rotation = 0.0f;
             if (player.ComponentsCount != 0) return player;
-            player.Scale = 0.05f;
+            player.Scale = 0.025f;
             player.AddComponent(GetComponent("player"));
             player.AddComponent(GetComponent("hyper"));
+            player.SetCollider(GetCollider("ship"));
 
             return player;
         }
@@ -179,15 +185,34 @@ namespace AsteroidsEngine
             foreach (var entity1 in _collection.Where(entity => entity.Tag == tag1 && entity.Active))
             {
                 var cachePos = entity1.Position;
-                var cacheSize = entity1.Scale / 2;
+                var cacheSize = entity1.Scale * 2;
                 foreach (var entity2 in _collection.Where(entity => entity.Tag == tag2 && entity.Active))
                     if (Vector2.DistanceSquared(cachePos, entity2.Position) <
-                        (cacheSize + entity2.Scale / 2) * (cacheSize + entity2.Scale / 2))
+                        (cacheSize + entity2.Scale*2) * (cacheSize + entity2.Scale*2))
                     {
                         entity1.Collide(entity2);
                         entity2.Collide(entity1);
                     }
                         
+            }
+        }
+
+        public void CreateBanner()
+        {
+            var banner = ReuseOrCreate("banner", 13);
+            banner.Active = true;
+            banner.Scale = 0.25f;
+        }
+
+        public void CleanUp()
+        {
+            foreach (var trash in _collection.Where(entity => entity.Tag == "asteroid" ||
+                                                                 entity.Tag == "laser" ||
+                                                                 entity.Tag == "bullet" ||
+                                                                 entity.Tag == "banner" ||
+                                                                 entity.Tag == "ufo"))
+            {
+                trash.Active = false;
             }
         }
     }
