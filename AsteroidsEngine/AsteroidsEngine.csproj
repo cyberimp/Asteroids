@@ -42,6 +42,12 @@
       <Compile Update="ShipCollider.cs">
         <DependentUpon>Collider.cs</DependentUpon>
       </Compile>
+      <Compile Update="AsteroidSpawnerComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
+      </Compile>
+      <Compile Update="UfoAiComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 
@@ -49,6 +48,8 @@ namespace AsteroidsEngine
             AddComponent("hyper",new HyperDriveComponent());
             AddComponent("decay", new DecayComponent());
             AddComponent("player", new PlayerComponent());
+            AddComponent("a_spawner", new AsteroidSpawnerComponent());
+            AddComponent("ufo_ai", new UfoAiComponent());
         }
 
         private void AddComponent(string name, UpdateComponent component)
@@ -73,18 +74,27 @@ namespace AsteroidsEngine
 
         private Entity ReuseOrCreate(string tag, int render)
         {
+            var result = ReuseOrCreate(tag);
+            result.SetRender(_renders[render]);
+
+            return result;
+        }
+
+        private Entity ReuseOrCreate(string tag)
+        {
             var result = _collection.FirstOrDefault(entity => entity.Tag == tag && !entity.Active);
             if (result != null)
                 result.Active = true;
             else
             {
                 result = new Entity(Vector2.Zero) {Tag = tag};
-                result.SetRender(_renders[render]);
                 _newCollection.Add(result);
             }
 
             return result;
         }
+
+        #region Factory Methods
 
         public Entity CreatePlayer()
         {
@@ -134,6 +144,13 @@ namespace AsteroidsEngine
             return bullet;
         }
 
+        public void CreateBanner()
+        {
+            var banner = ReuseOrCreate("banner", 13);
+            banner.Active = true;
+            banner.Scale = 0.25f;
+        }
+
         public void CreateLaser(Entity origin)
         {
             var rot = origin.Rotation; 
@@ -154,6 +171,28 @@ namespace AsteroidsEngine
                 pos += diff;
             }
         }
+
+        public Entity CreateAsteroidSpawner()
+        {
+            var spawner = ReuseOrCreate("spawner");
+            if (spawner.ComponentsCount == 0)
+            {
+                spawner.AddComponent(GetComponent("a_spawner"));
+            }
+            return spawner;
+        }
+
+        public Entity CreateUfo()
+        {
+            var ufo = ReuseOrCreate("ufo",15);
+            if (ufo.ComponentsCount != 0) return ufo;
+            ufo.AddComponent(GetComponent("ufo_ai"));
+            ufo.Scale = 0.025f;
+            ufo.SetCollider(GetCollider("bullet"));
+            return ufo;
+        }
+
+        #endregion
 
         public void Update(float delta)
         {
@@ -197,12 +236,6 @@ namespace AsteroidsEngine
             }
         }
 
-        public void CreateBanner()
-        {
-            var banner = ReuseOrCreate("banner", 13);
-            banner.Active = true;
-            banner.Scale = 0.25f;
-        }
 
         public void CleanUp()
         {
@@ -214,6 +247,11 @@ namespace AsteroidsEngine
             {
                 trash.Active = false;
             }
+        }
+
+        public Entity FindByTag(string tag)
+        {
+            return _collection.FirstOrDefault(entity => entity.Tag == tag);
         }
     }
 }

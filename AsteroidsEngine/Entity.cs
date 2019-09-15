@@ -54,7 +54,7 @@ namespace AsteroidsEngine
 
         public virtual void Render()
         {
-            if (!Active) return;
+            if (!Active || _render == null) return;
             ServiceLocator.GetShader().SetMatrix4("transform", _transMatrix);
             _render.Render(this);
         }

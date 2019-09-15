@@ -39,5 +39,12 @@ namespace EngineTests
             _entity.Update(1.0f);
             Assert.AreEqual(oldPos, _entity.Position);
         }
+        
+        [Test]
+        public void EntityCanRenderWithoutRender()
+        {
+            _entity.Active = true;
+            _entity.Render();
+        }
     }
 }
