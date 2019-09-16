@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenTK;
+using OpenTK.Platform.MacOS;
 
 namespace AsteroidsEngine
 {
@@ -8,15 +9,13 @@ namespace AsteroidsEngine
         private LinkedList<UpdateComponent> _updateComponents;
         private RenderComponent _render;
         public Vector2 Position { get; set; }
-        public Vector2 Velocity { get; set; }
+        public Vector2 Velocity { get; set; } = Vector2.Zero;
         public float Scale { get; set; }
-        
         public float Rotation { get; set; }
-        public bool Active { get; set; }
-        
+        public bool Active { get; set; } = true;
         public float Timer { get; set; }
-        
         public string Tag { get; set; }
+        public bool Visible { get; set; } = true;
         public int ComponentsCount => _updateComponents.Count;
 
         private ICollider _collider;
@@ -27,9 +26,7 @@ namespace AsteroidsEngine
         public Entity(Vector2 position)
         {
             _updateComponents = new LinkedList<UpdateComponent>();
-            Active = true;
             Position = position;
-            Velocity = Vector2.Zero;
             Scale = 0.5f;
 
         }
@@ -54,7 +51,7 @@ namespace AsteroidsEngine
 
         public virtual void Render()
         {
-            if (!Active || _render == null) return;
+            if (!Active || !Visible || _render == null) return;
             ServiceLocator.GetShader().SetMatrix4("transform", _transMatrix);
             _render.Render(this);
         }

@@ -30,6 +30,7 @@ namespace AsteroidsEngine
             AddCollider("bullet", new BulletCollider());
             AddCollider("asteroid", new AsteroidCollider());
             AddCollider("ship", new ShipCollider());
+            AddCollider("ufo",new UfoCollider());
         }
 
         private void FillRenders()
@@ -50,6 +51,9 @@ namespace AsteroidsEngine
             AddComponent("player", new PlayerComponent());
             AddComponent("a_spawner", new AsteroidSpawnerComponent());
             AddComponent("ufo_ai", new UfoAiComponent());
+            AddComponent("laser_charge", new LaserChargeComponent());
+            AddComponent("score", new ScoreDigitComponent());
+            AddComponent("game_over", new GameOverComponent());
         }
 
         private void AddComponent(string name, UpdateComponent component)
@@ -72,19 +76,23 @@ namespace AsteroidsEngine
             return _colliders[name];
         }
 
-        private Entity ReuseOrCreate(string tag, int render)
+        private Entity ReuseOrCreate(string tag, int render, bool visible = true)
         {
-            var result = ReuseOrCreate(tag);
+            var result = ReuseOrCreate(tag, visible);
+            
             result.SetRender(_renders[render]);
 
             return result;
         }
 
-        private Entity ReuseOrCreate(string tag)
+        private Entity ReuseOrCreate(string tag, bool visible = true)
         {
             var result = _collection.FirstOrDefault(entity => entity.Tag == tag && !entity.Active);
             if (result != null)
+            {
+                result.Visible = visible;
                 result.Active = true;
+            }
             else
             {
                 result = new Entity(Vector2.Zero) {Tag = tag};
@@ -111,9 +119,9 @@ namespace AsteroidsEngine
             return player;
         }
 
-        public Entity CreateAsteroid()
+        public Entity CreateAsteroid(bool visible = true)
         {
-            var asteroid = ReuseOrCreate("asteroid", 16);
+            var asteroid = ReuseOrCreate("asteroid", 16, visible);
             asteroid.Scale = 0.1f;
             asteroid.Position = -Vector2.UnitX * 0.8f;
             asteroid.Velocity = Vector2.One*0.2f;
@@ -188,8 +196,49 @@ namespace AsteroidsEngine
             if (ufo.ComponentsCount != 0) return ufo;
             ufo.AddComponent(GetComponent("ufo_ai"));
             ufo.Scale = 0.025f;
-            ufo.SetCollider(GetCollider("bullet"));
+            ufo.SetCollider(GetCollider("ufo"));
             return ufo;
+        }
+
+        public void CreateLaserCounter()
+        {
+            for (var i = 0.0f; i < 2.0f; i++)
+            {
+                var laser = ReuseOrCreate("score", 10);
+                laser.Scale = 0.025f;
+                laser.Position = new Vector2(-1f + 0.025f + 0.05f*i,1f - 0.075f);
+                laser.AddComponent(GetComponent("laser_charge"));
+                laser.Timer = i;
+            }
+        }
+
+        public void CreateScoreUi()
+        {
+            var score = ReuseOrCreate("score", 12);
+            score.Scale = 0.030f;
+            score.Position = new Vector2(-1.0f + 0.1f, 1f - 0.025f);
+            for (var i = 0.0f; i < 10.0f; i++)
+            {
+                var digit = ReuseOrCreate("score", 0);
+                digit.Scale = 0.030f;
+                digit.Position = new Vector2(-1.0f + 0.250f + 0.052f*i, 1f - 0.025f);
+                digit.Timer = i;
+                digit.AddComponent(GetComponent("score"));
+            }
+            
+            var bigScore = ReuseOrCreate("score", 12);
+            bigScore.Scale = 0.060f;
+            bigScore.Position = new Vector2(-1.0f + 0.2f, -0.35f);
+            bigScore.AddComponent(GetComponent("game_over"));
+            for (var i = 0.0f; i < 10.0f; i++)
+            {
+                var bigDigit = ReuseOrCreate("score", 0);
+                bigDigit.Scale = 0.060f;
+                bigDigit.Position = new Vector2(-1.0f + 0.5f + 0.1f*i, -0.35f);
+                bigDigit.Timer = i;
+                bigDigit.AddComponent(GetComponent("score"));
+                bigDigit.AddComponent(GetComponent("game_over"));
+            }
         }
 
         #endregion
@@ -252,6 +301,11 @@ namespace AsteroidsEngine
         public Entity FindByTag(string tag)
         {
             return _collection.FirstOrDefault(entity => entity.Tag == tag);
+        }
+
+        public RenderComponent GetRender(int num)
+        {
+            return _renders[num];
         }
     }
 }

@@ -11,6 +11,7 @@ namespace AsteroidsEngine
         private static Engine _engine;
         private static Controller _controller;
         private static EntityCollection _entities;
+        private static GuiVariables _variables;
         
         private ServiceLocator(){}
         
@@ -79,6 +80,11 @@ namespace AsteroidsEngine
                    throw new Exception("Entities collection not initialized", 
                        new NullReferenceException());
             
+        }
+
+        public static GuiVariables GetVariables()
+        {
+            return _variables ?? (_variables = new GuiVariables());
         }
     }
 }

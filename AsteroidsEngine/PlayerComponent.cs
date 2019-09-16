@@ -6,38 +6,27 @@ namespace AsteroidsEngine
     {
         private float _bulletCd;
         private float _laserCd;
-//        private int _laser = 2;
-//        private bool _laserVisible;
-//        public override void Render(Entity entity)
-//        {
-//            if (!_laserVisible) return;
-//            var pos = entity.Position;
-//            var rot = MathHelper.DegreesToRadians(entity.Rotation);
-//            var matrix = Matrix4.CreateScale(0.01f) *
-//                         Matrix4.CreateRotationZ(rot);
-//            var diff = Vector2.Transform(Vector2.UnitY*0.02f,
-//                Quaternion.FromAxisAngle(Vector3.UnitZ, rot));
-//
-//            pos += diff * 5;
-//            while (Vector2.Clamp(pos,-Vector2.One, Vector2.One) == pos)
-//            {
-//                ServiceLocator.GetShader().
-//                    SetMatrix4("transform",matrix*
-//                                           Matrix4.CreateTranslation(
-//                                               pos.X,pos.Y,0.0f));
-//                pos += diff;
-//                ServiceLocator.GetTexture().RenderQuad(11);
-//            }
-//
-//
-//        }
+
+        private readonly float laserChargeTime = 5.0f;
 
         public override void Update(Entity entity, float delta)
         {
+            var vars = ServiceLocator.GetVariables();
             if(_bulletCd > 0.0f)
                 _bulletCd -= delta;
             if(_laserCd > 0.0f)
                 _laserCd -= delta;
+
+            if (entity.Timer > 0.0f && vars.LaserCharges < 2)
+                entity.Timer -= delta;
+
+            if (entity.Timer <= 0.0f && vars.LaserCharges < 2)
+            {
+                vars.LaserCharges++;
+                entity.Timer = laserChargeTime;
+            }
+                
+
             
             var input = ServiceLocator.GetController();
 
@@ -56,10 +45,12 @@ namespace AsteroidsEngine
                                                MathHelper.DegreesToRadians(entity.Rotation)));
             }
 
-            if (input.Fire2 && _laserCd < 0.001f)
+            if (input.Fire2 && _laserCd < 0.001f && vars.LaserCharges > 0)
             {
                 ServiceLocator.GetEntities().CreateLaser(entity);
                 _laserCd = 2f;
+                vars.LaserCharges--;
+                entity.Timer = laserChargeTime;
             }
 //            _laserVisible = input.Fire2;
             

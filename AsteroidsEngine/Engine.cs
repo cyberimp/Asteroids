@@ -48,7 +48,9 @@ namespace AsteroidsEngine
             GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
 
             _entities.CreatePlayer();
-            _entities.CreateAsteroid();
+            _entities.CreateAsteroidSpawner();
+            _entities.CreateLaserCounter();
+            _entities.CreateScoreUi();
             
             ServiceLocator.SetEngine(this);
             ServiceLocator.SetEntities(_entities);
@@ -92,7 +94,7 @@ namespace AsteroidsEngine
             _entities.Collide("bullet","asteroid");
             _entities.Collide("bullet","ufo");
             _entities.Collide("laser","asteroid");
-            _entities.Collide("asteroid","ufo");
+            _entities.Collide("laser","ufo");
             _entities.Collide("ufo","player");
             _entities.Collide("asteroid","player");
             base.OnUpdateFrame(e);
@@ -115,23 +117,32 @@ namespace AsteroidsEngine
                 case Key.Up:
                     controller.Thrust = true;
                     break;
-                case Key.Space:
+                case Key.Z:
                     controller.Fire1 = true;
                     break;
-                case Key.LControl:
+                case Key.X:
                     controller.Fire2 = true;
                     break;
                 case Key.F:
                     if (_waitRestart)
                     {
-                        _entities.CleanUp();
-                        _entities.CreatePlayer();
-                        _waitRestart = false;
+                        RestartGame();
                     }
                     break;
                         
             }
             base.OnKeyDown(e);
+        }
+
+        private void RestartGame()
+        {
+            _entities.CleanUp();
+            _entities.CreatePlayer();
+            _entities.FindByTag("spawner").Timer = 0.0f;
+            ServiceLocator.GetVariables().LaserCharges = 2;
+            ServiceLocator.GetVariables().Score = 0;
+            ServiceLocator.GetVariables().GameOver = false;
+            _waitRestart = false;
         }
 
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
@@ -149,10 +160,10 @@ namespace AsteroidsEngine
                 case Key.Up:
                     controller.Thrust = false;
                     break;
-                case Key.Space:
+                case Key.Z:
                     controller.Fire1 = false;
                     break;
-                case Key.LControl:
+                case Key.X:
                     controller.Fire2 = false;
                     break;
             }
@@ -162,6 +173,7 @@ namespace AsteroidsEngine
         public void GameOver()
         {
             _entities.CreateBanner();
+            ServiceLocator.GetVariables().GameOver = true;
             _waitRestart = true;
         }
     }

@@ -48,6 +48,15 @@
       <Compile Update="UfoAiComponent.cs">
         <DependentUpon>UpdateComponent.cs</DependentUpon>
       </Compile>
+      <Compile Update="LaserChargeComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
+      </Compile>
+      <Compile Update="ScoreDigitComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
+      </Compile>
+      <Compile Update="UfoCollider.cs">
+        <DependentUpon>Collider.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
