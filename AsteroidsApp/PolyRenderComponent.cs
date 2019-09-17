@@ -7,7 +7,7 @@ namespace AsteroidsApp
         private readonly Texture _texture;
         public PolyRenderComponent(int quadNum) : base(quadNum)
         {
-            _texture = ServiceLocator.GetTexture();
+            _texture = ResourceLocator.GetTexture();
         }
 
         private void RenderSprite()

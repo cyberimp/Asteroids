@@ -13,4 +13,9 @@
       <None Remove="asteroids.png" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Include="atlas.png" />
+      <EmbeddedResource Include="atlas.txt" />
+    </ItemGroup>
+
 </Project>

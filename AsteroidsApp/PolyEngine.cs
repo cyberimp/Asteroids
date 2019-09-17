@@ -5,13 +5,19 @@ namespace AsteroidsApp
 {
     public class PolyEngine: Engine
     {
+        private Texture _texture;
         public bool SpriteMode { get; private set; } = true;
 
         protected override void SetupResources()
         {
             base.SetupResources();
             ServiceLocator.SetEngine(this);
-            var numRenders = ServiceLocator.GetTexture().Length();
+            _texture = new Texture("atlas");
+            _texture.Use();
+            
+            ResourceLocator.SetTexture(_texture);
+            
+            var numRenders = _texture.Length();
             for (var i = 0; i < numRenders; i++)
             {
                 var render = new PolyRenderComponent(i);

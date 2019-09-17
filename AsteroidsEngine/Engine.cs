@@ -17,7 +17,7 @@ namespace AsteroidsEngine
         protected EntityCollection Entities;
 
         private Shader _shader;
-        private Texture _texture;
+//        private Texture _texture;
         private bool _waitRestart;
 
 
@@ -55,17 +55,12 @@ namespace AsteroidsEngine
             ServiceLocator.SetShader(_shader);
             _shader.Use();
 
-            _texture = new Texture("atlas");
-            ServiceLocator.SetTexture(_texture);
-            _texture.Use();
-
             Entities = new EntityCollection();
         }
 
         protected override void OnUnload(EventArgs e)
         {
             _shader.Dispose();
-            _texture.Dispose();
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
           
             base.OnUnload(e);
@@ -83,7 +78,6 @@ namespace AsteroidsEngine
             
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            _texture.Use();
             _shader.Use();
             
             Entities.Render();

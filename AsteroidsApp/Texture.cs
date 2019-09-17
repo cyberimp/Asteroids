@@ -28,19 +28,13 @@ namespace AsteroidsEngine
         public Texture(string path)
         {
             _names = new List<string>();
-            GenIndices(path);
                 
-            // Generate handle
             _handle = GL.GenTexture();
 
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
-            // Bind the handle
             Use();
 
-            // For this example, we're going to use .NET's built-in System.Drawing library to load textures.
-
-            // Load the image
             using (var stream = a.GetManifestResourceStream(myName + "." + path + ".png"))
             using (var image = new Bitmap(stream)) {
                 var data = image.LockBits(
@@ -67,6 +61,7 @@ namespace AsteroidsEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            GenIndices(path);
             InitBuffers();
         }
 
@@ -160,7 +155,7 @@ namespace AsteroidsEngine
             }
         }
 
-        private void InitBuffers()
+        public void InitBuffers()
         {
             _vertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
@@ -176,16 +171,10 @@ namespace AsteroidsEngine
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
 
-            // Because there's now 5 floats between the start of the first vertex and the start of the second,
-            // we modify this from 3 * sizeof(float) to 5 * sizeof(float).
-            // This will now pass the new vertex array to the buffer.
             var vertexLocation = ServiceLocator.GetShader().GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
             GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-            // Next, we also setup texture coordinates. It works in much the same way.
-            // We add an offset of 3, since the first vertex coordinate comes after the first vertex
-            // and change the amount of data to 2 because there's only 2 floats for vertex coordinates
             var texCoordLocation = ServiceLocator.GetShader().GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
@@ -205,7 +194,6 @@ namespace AsteroidsEngine
         
         public void RenderQuad(int num)
         {
-            GL.BindVertexArray(_vertexArrayObject);
             GL.DrawElements(PrimitiveType.Triangles, 6, 
                 DrawElementsType.UnsignedInt, num*6*sizeof(float));
         }

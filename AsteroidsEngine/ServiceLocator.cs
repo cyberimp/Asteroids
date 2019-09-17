@@ -5,7 +5,6 @@ namespace AsteroidsEngine
     public static class ServiceLocator
     {
         private static Shader _shader;
-        private static Texture _texture;
         private static Engine _engine;
         private static Controller _controller;
         private static EntityCollection _entities;
@@ -24,17 +23,6 @@ namespace AsteroidsEngine
                        new NullReferenceException());
         }
         
-        public static void SetTexture(Texture texture)
-        {
-            _texture = texture;
-        }
-
-        public static Texture GetTexture()
-        {
-            return _texture ?? 
-                   throw new Exception("Texture not initialized", 
-                       new NullReferenceException());
-        }
         
         public static void SetEngine(Engine engine)
         {
