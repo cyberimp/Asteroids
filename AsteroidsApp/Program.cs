@@ -1,13 +1,10 @@
-﻿using System;
-using AsteroidsEngine;
-
-namespace AsteroidsApp
+﻿namespace AsteroidsApp
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var engine = new Engine();
+            var engine = new PolyEngine();
             engine.Run(60);
         }
     }

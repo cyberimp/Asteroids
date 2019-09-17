@@ -63,9 +63,6 @@ namespace AsteroidsEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
-
-            // Now, set the wrapping mode. S is for the X axis, and T is for the Y axis.
-            // We set this to Repeat so that textures will repeat when wrapped. Not demonstrated here since the texture coordinates exactly match
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
@@ -205,6 +202,7 @@ namespace AsteroidsEngine
         {
             RenderQuad(_names.FindIndex(s => s == name));
         }
+        
         public void RenderQuad(int num)
         {
             GL.BindVertexArray(_vertexArrayObject);

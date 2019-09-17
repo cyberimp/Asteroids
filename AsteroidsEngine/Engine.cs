@@ -11,21 +11,19 @@ namespace AsteroidsEngine
         private const int DefaultXRes = 600;
         private const int DefaultYRes = 600;
         private const string AppName = "ASTEROIDS";
+        public const int MaxLaserCharges = 3;
         private readonly Color4 _backColor;
 
-        private EntityCollection _entities;
-
-        private EngineSettings _settings;
+        protected EntityCollection Entities;
 
         private Shader _shader;
         private Texture _texture;
         private bool _waitRestart;
 
 
-        public Engine(int xRes = DefaultXRes, int yRes = DefaultYRes):
+        protected Engine(int xRes = DefaultXRes, int yRes = DefaultYRes):
             base(xRes, yRes, GraphicsMode.Default, AppName, GameWindowFlags.FixedWindow)
         {
-            _settings = new EngineSettings(xRes, yRes);
             _backColor = new Color4( 13, 8, 13,255);//Eroge Copper Black
         }
 
@@ -35,6 +33,24 @@ namespace AsteroidsEngine
         {
             GL.ClearColor(_backColor);
 
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
+            ServiceLocator.SetEngine(this);
+            SetupResources();
+
+            Entities.CreatePlayer();
+            Entities.CreateAsteroidSpawner();
+            Entities.CreateLaserCounter();
+            Entities.CreateScoreUi();
+            Entities.CreateBanner();
+            
+
+            ServiceLocator.SetEntities(Entities);
+            base.OnLoad(e);
+        }
+
+        protected virtual void SetupResources()
+        {
             _shader = new Shader("shader.vert", "shader.frag");
             ServiceLocator.SetShader(_shader);
             _shader.Use();
@@ -42,19 +58,8 @@ namespace AsteroidsEngine
             _texture = new Texture("atlas");
             ServiceLocator.SetTexture(_texture);
             _texture.Use();
-            
-            _entities = new EntityCollection();           
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
 
-            _entities.CreatePlayer();
-            _entities.CreateAsteroidSpawner();
-            _entities.CreateLaserCounter();
-            _entities.CreateScoreUi();
-            
-            ServiceLocator.SetEngine(this);
-            ServiceLocator.SetEntities(_entities);
-            base.OnLoad(e);
+            Entities = new EntityCollection();
         }
 
         protected override void OnUnload(EventArgs e)
@@ -81,7 +86,7 @@ namespace AsteroidsEngine
             _texture.Use();
             _shader.Use();
             
-            _entities.Render();
+            Entities.Render();
             
             
             SwapBuffers();
@@ -90,13 +95,13 @@ namespace AsteroidsEngine
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            _entities.Update((float) e.Time);
-            _entities.Collide("bullet","asteroid");
-            _entities.Collide("bullet","ufo");
-            _entities.Collide("laser","asteroid");
-            _entities.Collide("laser","ufo");
-            _entities.Collide("ufo","player");
-            _entities.Collide("asteroid","player");
+            Entities.Update((float) e.Time);
+            Entities.Collide("bullet","asteroid");
+            Entities.Collide("bullet","ufo");
+            Entities.Collide("laser","asteroid");
+            Entities.Collide("laser","ufo");
+            Entities.Collide("ufo","player");
+            Entities.Collide("asteroid","player");
             base.OnUpdateFrame(e);
         }
 
@@ -136,10 +141,10 @@ namespace AsteroidsEngine
 
         private void RestartGame()
         {
-            _entities.CleanUp();
-            _entities.CreatePlayer();
-            _entities.FindByTag("spawner").Timer = 0.0f;
-            ServiceLocator.GetVariables().LaserCharges = 2;
+            Entities.CleanUp();
+            Entities.CreatePlayer();
+            Entities.FindByTag("spawner").Timer = 0.0f;
+            ServiceLocator.GetVariables().LaserCharges = MaxLaserCharges;
             ServiceLocator.GetVariables().Score = 0;
             ServiceLocator.GetVariables().GameOver = false;
             _waitRestart = false;
@@ -172,7 +177,6 @@ namespace AsteroidsEngine
 
         public void GameOver()
         {
-            _entities.CreateBanner();
             ServiceLocator.GetVariables().GameOver = true;
             _waitRestart = true;
         }

@@ -10,13 +10,9 @@
 
     <ItemGroup>
       <None Remove="shader.vert" />
-      <EmbeddedResource Include="shader.vert">
-        <DependentUpon>Resources.resx</DependentUpon>
-      </EmbeddedResource>
+      <EmbeddedResource Include="shader.vert" />
       <None Remove="shader.frag" />
-      <EmbeddedResource Include="shader.frag">
-        <DependentUpon>Resources.resx</DependentUpon>
-      </EmbeddedResource>
+      <EmbeddedResource Include="shader.frag" />
       <None Remove="atlas.txt" />
       <EmbeddedResource Include="atlas.txt" />
       <None Remove="atlas.png" />
@@ -34,13 +30,13 @@
         <DependentUpon>UpdateComponent.cs</DependentUpon>
       </Compile>
       <Compile Update="BulletCollider.cs">
-        <DependentUpon>Collider.cs</DependentUpon>
+        <DependentUpon>ICollider.cs</DependentUpon>
       </Compile>
       <Compile Update="AsteroidCollider.cs">
-        <DependentUpon>Collider.cs</DependentUpon>
+        <DependentUpon>ICollider.cs</DependentUpon>
       </Compile>
       <Compile Update="ShipCollider.cs">
-        <DependentUpon>Collider.cs</DependentUpon>
+        <DependentUpon>ICollider.cs</DependentUpon>
       </Compile>
       <Compile Update="AsteroidSpawnerComponent.cs">
         <DependentUpon>UpdateComponent.cs</DependentUpon>
@@ -55,7 +51,10 @@
         <DependentUpon>UpdateComponent.cs</DependentUpon>
       </Compile>
       <Compile Update="UfoCollider.cs">
-        <DependentUpon>Collider.cs</DependentUpon>
+        <DependentUpon>ICollider.cs</DependentUpon>
+      </Compile>
+      <Compile Update="GameOverComponent.cs">
+        <DependentUpon>UpdateComponent.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 

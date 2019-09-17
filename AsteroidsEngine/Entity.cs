@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using OpenTK;
-using OpenTK.Platform.MacOS;
 
 namespace AsteroidsEngine
 {
-    public class Entity
+    public sealed class Entity
     {
-        private LinkedList<UpdateComponent> _updateComponents;
+        private readonly LinkedList<UpdateComponent> _updateComponents;
         private RenderComponent _render;
         public Vector2 Position { get; set; }
         public Vector2 Velocity { get; set; } = Vector2.Zero;
@@ -38,7 +37,7 @@ namespace AsteroidsEngine
                            Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
         }
 
-        public virtual void Update(float delta)
+        public void Update(float delta)
         {
             if (!Active) return;
             Position += Velocity * delta;
@@ -49,11 +48,11 @@ namespace AsteroidsEngine
             UpdateMatrix();
         }
 
-        public virtual void Render()
+        public void Render()
         {
             if (!Active || !Visible || _render == null) return;
             ServiceLocator.GetShader().SetMatrix4("transform", _transMatrix);
-            _render.Render(this);
+            _render.Render();
         }
 
         public void AddComponent(UpdateComponent component)

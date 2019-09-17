@@ -2,19 +2,16 @@
 {
     public class RenderComponent
     {
+        protected readonly int QuadNum;
 
-        private readonly Texture _texture;
-        private readonly int _quadNum;
-
-        public RenderComponent(int quadNum)
+        protected RenderComponent(int quadNum)
         {
-            _texture = ServiceLocator.GetTexture();
-            _quadNum = quadNum;
+            QuadNum = quadNum;
         }
         
-        public virtual void Render(Entity entity)
+        public virtual void Render()
         {
-            _texture.RenderQuad(_quadNum);
+            //do nothing
         }
 
     }

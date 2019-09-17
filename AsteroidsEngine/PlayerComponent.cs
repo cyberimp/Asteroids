@@ -7,7 +7,7 @@ namespace AsteroidsEngine
         private float _bulletCd;
         private float _laserCd;
 
-        private readonly float laserChargeTime = 5.0f;
+        private const float LaserChargeTime = 5.0f;
 
         public override void Update(Entity entity, float delta)
         {
@@ -17,13 +17,13 @@ namespace AsteroidsEngine
             if(_laserCd > 0.0f)
                 _laserCd -= delta;
 
-            if (entity.Timer > 0.0f && vars.LaserCharges < 2)
+            if (entity.Timer > 0.0f && vars.LaserCharges < Engine.MaxLaserCharges)
                 entity.Timer -= delta;
 
-            if (entity.Timer <= 0.0f && vars.LaserCharges < 2)
+            if (entity.Timer <= 0.0f && vars.LaserCharges < Engine.MaxLaserCharges)
             {
                 vars.LaserCharges++;
-                entity.Timer = laserChargeTime;
+                entity.Timer = LaserChargeTime;
             }
                 
 
@@ -50,7 +50,7 @@ namespace AsteroidsEngine
                 ServiceLocator.GetEntities().CreateLaser(entity);
                 _laserCd = 2f;
                 vars.LaserCharges--;
-                entity.Timer = laserChargeTime;
+                entity.Timer = LaserChargeTime;
             }
 //            _laserVisible = input.Fire2;
             

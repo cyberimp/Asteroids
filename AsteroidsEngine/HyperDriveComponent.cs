@@ -1,6 +1,4 @@
-﻿using OpenTK;
-
-namespace AsteroidsEngine
+﻿namespace AsteroidsEngine
 {
     public class HyperDriveComponent:UpdateComponent
     {

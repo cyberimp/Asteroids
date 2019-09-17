@@ -9,7 +9,7 @@ namespace AsteroidsEngine
         private readonly string[] _renderTagOrder = 
             {"","bullet","asteroid","ufo","laser","player", "banner", "score"};
         private readonly LinkedList<Entity> _collection;
-        private List<RenderComponent> _renders;
+        private readonly List<RenderComponent> _renders;
         private readonly List<Entity> _newCollection;
         private readonly Dictionary<string, UpdateComponent> _components;
         private readonly Dictionary<string, ICollider> _colliders;
@@ -22,9 +22,8 @@ namespace AsteroidsEngine
             _colliders = new Dictionary<string, ICollider>();
             FillComponents();
             FillColliders();
-            FillRenders();
+            _renders = new List<RenderComponent>();
         }
-
         private void FillColliders()
         {
             AddCollider("bullet", new BulletCollider());
@@ -32,16 +31,9 @@ namespace AsteroidsEngine
             AddCollider("ship", new ShipCollider());
             AddCollider("ufo",new UfoCollider());
         }
-
-        private void FillRenders()
+        public void AddRender(RenderComponent renderComponent)
         {
-            _renders = new List<RenderComponent>();
-            var numRenders = ServiceLocator.GetTexture().Length();
-            for (var i = 0; i < numRenders; i++)
-            {
-                var render = new RenderComponent(i);
-                _renders.Add(render);
-            }
+            _renders.Add(renderComponent);
         }
 
         private void FillComponents()
@@ -49,7 +41,7 @@ namespace AsteroidsEngine
             AddComponent("hyper",new HyperDriveComponent());
             AddComponent("decay", new DecayComponent());
             AddComponent("player", new PlayerComponent());
-            AddComponent("a_spawner", new AsteroidSpawnerComponent());
+            AddComponent("spawner", new AsteroidSpawnerComponent());
             AddComponent("ufo_ai", new UfoAiComponent());
             AddComponent("laser_charge", new LaserChargeComponent());
             AddComponent("score", new ScoreDigitComponent());
@@ -104,19 +96,17 @@ namespace AsteroidsEngine
 
         #region Factory Methods
 
-        public Entity CreatePlayer()
+        public void CreatePlayer()
         {
             var player = ReuseOrCreate("player", 14);
             player.Position = Vector2.Zero;
             player.Velocity = Vector2.Zero;
             player.Rotation = 0.0f;
-            if (player.ComponentsCount != 0) return player;
+            if (player.ComponentsCount != 0) return;
             player.Scale = 0.025f;
             player.AddComponent(GetComponent("player"));
             player.AddComponent(GetComponent("hyper"));
             player.SetCollider(GetCollider("ship"));
-
-            return player;
         }
 
         public Entity CreateAsteroid(bool visible = true)
@@ -133,7 +123,7 @@ namespace AsteroidsEngine
             return asteroid;
         }
 
-        public Entity CreateBullet(Entity origin)
+        public void CreateBullet(Entity origin)
         {
             var bullet = ReuseOrCreate("bullet", 17);
             bullet.Timer = 0.5f;
@@ -142,19 +132,16 @@ namespace AsteroidsEngine
             bullet.Velocity = Vector2.Transform(Vector2.UnitY, 
                         Quaternion.FromAxisAngle(Vector3.UnitZ, 
                             MathHelper.DegreesToRadians(origin.Rotation)));
-            if (bullet.ComponentsCount > 0) return bullet;
-            
-            
+            if (bullet.ComponentsCount > 0) return;
             bullet.AddComponent(GetComponent("decay"));
             bullet.AddComponent(GetComponent("hyper"));
             bullet.SetCollider(GetCollider("bullet"));
-            
-            return bullet;
         }
 
         public void CreateBanner()
         {
             var banner = ReuseOrCreate("banner", 13);
+            banner.AddComponent(GetComponent("game_over"));
             banner.Active = true;
             banner.Scale = 0.25f;
         }
@@ -180,14 +167,13 @@ namespace AsteroidsEngine
             }
         }
 
-        public Entity CreateAsteroidSpawner()
+        public void CreateAsteroidSpawner()
         {
             var spawner = ReuseOrCreate("spawner");
             if (spawner.ComponentsCount == 0)
             {
-                spawner.AddComponent(GetComponent("a_spawner"));
+                spawner.AddComponent(GetComponent("spawner"));
             }
-            return spawner;
         }
 
         public Entity CreateUfo()
@@ -202,7 +188,7 @@ namespace AsteroidsEngine
 
         public void CreateLaserCounter()
         {
-            for (var i = 0.0f; i < 2.0f; i++)
+            for (var i = 0.0f; i < 3.0f; i++)
             {
                 var laser = ReuseOrCreate("score", 10);
                 laser.Scale = 0.025f;
@@ -291,7 +277,6 @@ namespace AsteroidsEngine
             foreach (var trash in _collection.Where(entity => entity.Tag == "asteroid" ||
                                                                  entity.Tag == "laser" ||
                                                                  entity.Tag == "bullet" ||
-                                                                 entity.Tag == "banner" ||
                                                                  entity.Tag == "ufo"))
             {
                 trash.Active = false;

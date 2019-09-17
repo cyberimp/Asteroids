@@ -3,7 +3,7 @@
     public class GuiVariables
     {
         public int Score { get; set; }
-        public int LaserCharges { get; set; } = 2;
-        public bool GameOver { get; set; } = false;
+        public int LaserCharges { get; set; } = Engine.MaxLaserCharges;
+        public bool GameOver { get; set; }
     }
 }

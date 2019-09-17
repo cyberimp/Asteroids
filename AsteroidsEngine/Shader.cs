@@ -9,7 +9,7 @@ namespace AsteroidsEngine
 {
     public class Shader:IDisposable
     {
-        public readonly int Handle;
+        private readonly int _handle;
 
         private readonly Dictionary<string, int> _uniformLocations;
 
@@ -55,51 +55,44 @@ namespace AsteroidsEngine
             if (infoLogFrag != string.Empty)
                 Console.WriteLine(infoLogFrag);
             
-            Handle = GL.CreateProgram();
+            _handle = GL.CreateProgram();
 
-            GL.AttachShader(Handle, vertexShader);
-            GL.AttachShader(Handle, fragmentShader);
+            GL.AttachShader(_handle, vertexShader);
+            GL.AttachShader(_handle, fragmentShader);
 
-            GL.LinkProgram(Handle);
+            GL.LinkProgram(_handle);
             
             
-            GL.DetachShader(Handle, vertexShader);
-            GL.DetachShader(Handle, fragmentShader);
+            GL.DetachShader(_handle, vertexShader);
+            GL.DetachShader(_handle, fragmentShader);
             GL.DeleteShader(fragmentShader);
             GL.DeleteShader(vertexShader);
             
-            GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+            GL.GetProgram(_handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
             
-            // Next, allocate the dictionary to hold the locations.
             _uniformLocations = new Dictionary<string, int>();
 
-            // Loop over all the uniforms,
             for (var i = 0; i < numberOfUniforms; i++)
             {
-                // get the name of this uniform,
-                var key = GL.GetActiveUniform(Handle, i, out _, out _);
-
-                // get the location,
-                var location = GL.GetUniformLocation(Handle, key);
-                
-                // and then add it to the dictionary.
+                var key = GL.GetActiveUniform(_handle, i, out _, out _);
+                var location = GL.GetUniformLocation(_handle, key);
                 _uniformLocations.Add(key, location);
             }
         }
         
         public void Use()
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(_handle);
         }
 
         public int GetAttribLocation(string name)
         {
-            return GL.GetAttribLocation(Handle, name);
+            return GL.GetAttribLocation(_handle, name);
         }
         
         public void SetMatrix4(string name, Matrix4 data)
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(_handle);
             GL.UniformMatrix4(_uniformLocations[name], true, ref data);
         }
 
@@ -107,18 +100,18 @@ namespace AsteroidsEngine
 
         private bool _disposedValue;
 
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (_disposedValue) return;
             
-            GL.DeleteProgram(Handle);
+            GL.DeleteProgram(_handle);
 
             _disposedValue = true;
         }
 
         ~Shader()
         {
-            GL.DeleteProgram(Handle);
+            GL.DeleteProgram(_handle);
         }
 
 
