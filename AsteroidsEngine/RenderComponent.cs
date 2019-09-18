@@ -8,11 +8,10 @@
         {
             QuadNum = quadNum;
         }
-        
+
         public virtual void Render()
         {
             //do nothing
         }
-
     }
 }

@@ -14,8 +14,8 @@ namespace AsteroidsApp
 
         public static Texture GetTexture()
         {
-            return _texture ?? 
-                   throw new Exception("Texture not initialized", 
+            return _texture ??
+                   throw new Exception("Texture not initialized",
                        new NullReferenceException());
         }
 
@@ -26,8 +26,8 @@ namespace AsteroidsApp
 
         public static Model GetModel()
         {
-            return _model ?? 
-                   throw new Exception("Model not initialized", 
+            return _model ??
+                   throw new Exception("Model not initialized",
                        new NullReferenceException());
         }
     }

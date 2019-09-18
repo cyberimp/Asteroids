@@ -1,6 +1,6 @@
 ﻿namespace AsteroidsEngine
 {
-    public class LaserChargeComponent:UpdateComponent
+    public class LaserChargeComponent : UpdateComponent
     {
         public override void Update(Entity entity, float delta)
         {

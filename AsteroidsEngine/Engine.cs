@@ -14,19 +14,19 @@ namespace AsteroidsEngine
         public const int MaxLaserCharges = 3;
         private readonly Color4 _backColor;
 
-        protected EntityCollection Entities;
-
         private Shader _shader;
+
 //        private Texture _texture;
         private bool _waitRestart;
 
+        protected EntityCollection Entities;
 
-        protected Engine(int xRes = DefaultXRes, int yRes = DefaultYRes):
+
+        protected Engine(int xRes = DefaultXRes, int yRes = DefaultYRes) :
             base(xRes, yRes, GraphicsMode.Default, AppName, GameWindowFlags.FixedWindow)
         {
-            _backColor = new Color4( 13, 8, 13,255);//Eroge Copper Black
+            _backColor = new Color4(13, 8, 13, 255); //Eroge Copper Black
         }
-
 
 
         protected override void OnLoad(EventArgs e)
@@ -34,7 +34,7 @@ namespace AsteroidsEngine
             GL.ClearColor(_backColor);
 
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha,BlendingFactor.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             ServiceLocator.SetEngine(this);
             SetupResources();
 
@@ -45,7 +45,7 @@ namespace AsteroidsEngine
             Entities.CreateLaserCounter();
             Entities.CreateScoreUi();
             Entities.CreateBanner();
-            
+
             base.OnLoad(e);
         }
 
@@ -62,7 +62,7 @@ namespace AsteroidsEngine
         {
             _shader.Dispose();
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-          
+
             base.OnUnload(e);
         }
 
@@ -74,15 +74,15 @@ namespace AsteroidsEngine
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            Title = AppName + " fps:" + 1/e.Time ;
-            
+            Title = AppName + " fps:" + 1 / e.Time;
+
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             _shader.Use();
-            
+
             Entities.Render();
-            
-            
+
+
             SwapBuffers();
             base.OnRenderFrame(e);
         }
@@ -90,12 +90,12 @@ namespace AsteroidsEngine
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             Entities.Update((float) e.Time);
-            Entities.Collide("bullet","asteroid");
-            Entities.Collide("bullet","ufo");
-            Entities.Collide("laser","asteroid");
-            Entities.Collide("laser","ufo");
-            Entities.Collide("ufo","player");
-            Entities.Collide("asteroid","player");
+            Entities.Collide("bullet", "asteroid");
+            Entities.Collide("bullet", "ufo");
+            Entities.Collide("laser", "asteroid");
+            Entities.Collide("laser", "ufo");
+            Entities.Collide("ufo", "player");
+            Entities.Collide("asteroid", "player");
             base.OnUpdateFrame(e);
         }
 
@@ -123,13 +123,10 @@ namespace AsteroidsEngine
                     controller.Fire2 = true;
                     break;
                 case Key.F:
-                    if (_waitRestart)
-                    {
-                        RestartGame();
-                    }
+                    if (_waitRestart) RestartGame();
                     break;
-                        
             }
+
             base.OnKeyDown(e);
         }
 
@@ -147,7 +144,7 @@ namespace AsteroidsEngine
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             var controller = ServiceLocator.GetController();
-            
+
             switch (e.Key)
             {
                 case Key.Left:
@@ -166,6 +163,7 @@ namespace AsteroidsEngine
                     controller.Fire2 = false;
                     break;
             }
+
             base.OnKeyDown(e);
         }
 

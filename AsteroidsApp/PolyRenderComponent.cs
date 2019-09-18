@@ -2,10 +2,10 @@
 
 namespace AsteroidsApp
 {
-    public class PolyRenderComponent:RenderComponent
+    public class PolyRenderComponent : RenderComponent
     {
-        private readonly Texture _texture;
         private readonly Model _model;
+        private readonly Texture _texture;
 
         public PolyRenderComponent(int quadNum) : base(quadNum)
         {
@@ -16,7 +16,7 @@ namespace AsteroidsApp
 
         public override void Render()
         {
-            if (((PolyEngine)ServiceLocator.GetEngine()).SpriteMode)
+            if (((PolyEngine) ServiceLocator.GetEngine()).SpriteMode)
                 RenderSprite();
             else
                 RenderModel();
@@ -26,6 +26,7 @@ namespace AsteroidsApp
         {
             _texture.RenderQuad(QuadNum);
         }
+
         private void RenderModel()
         {
             _model.RenderModel(QuadNum);

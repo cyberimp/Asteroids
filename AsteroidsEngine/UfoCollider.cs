@@ -1,6 +1,6 @@
 ﻿namespace AsteroidsEngine
 {
-    public class UfoCollider: ICollider
+    public class UfoCollider : ICollider
     {
         public void OnCollide(Entity entity1, Entity entity2)
         {

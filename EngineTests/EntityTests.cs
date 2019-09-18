@@ -7,6 +7,7 @@ namespace EngineTests
     public class EntityTest
     {
         private Entity _entity;
+
         [SetUp]
         public void Setup()
         {
@@ -20,7 +21,7 @@ namespace EngineTests
             _entity.Update(1.0f);
             Assert.AreEqual(oldPos, _entity.Position);
         }
-        
+
         [Test]
         public void EntityMovesWhenSpeedIsSet()
         {
@@ -29,7 +30,7 @@ namespace EngineTests
             _entity.Update(1.0f);
             Assert.AreNotEqual(oldPos, _entity.Position);
         }
-        
+
         [Test]
         public void EntityDontMoveWhenInactive()
         {
@@ -39,7 +40,7 @@ namespace EngineTests
             _entity.Update(1.0f);
             Assert.AreEqual(oldPos, _entity.Position);
         }
-        
+
         [Test]
         public void EntityCanRenderWithoutRender()
         {

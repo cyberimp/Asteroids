@@ -1,6 +1,6 @@
 ﻿namespace AsteroidsEngine
 {
-    public class DecayComponent:UpdateComponent
+    public class DecayComponent : UpdateComponent
     {
         public override void Update(Entity entity, float delta)
         {

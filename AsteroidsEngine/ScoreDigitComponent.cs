@@ -1,6 +1,6 @@
 ﻿namespace AsteroidsEngine
 {
-    public class ScoreDigitComponent: UpdateComponent
+    public class ScoreDigitComponent : UpdateComponent
     {
         public override void Update(Entity entity, float delta)
         {
@@ -10,7 +10,6 @@
                 score /= 10;
             var digit = score % 10;
             entity.SetRender(collection.GetRender(digit));
-
         }
     }
 }

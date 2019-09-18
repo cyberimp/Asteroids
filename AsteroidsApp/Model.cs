@@ -3,23 +3,24 @@ using OpenTK.Graphics.OpenGL;
 
 namespace AsteroidsApp
 {
-    public class Model:Texture
+    public class Model : Texture
     {
-        private float[] _vertices =
-        {
-            0f, 1f, 0f, 0f, 0f,
-            1f, -1f, 0f, 0f, 0f,
-            0f, -0.5f, 0f, 0f, 0f,
-            -1f, -1f, 0f, 0f, 0f
-        };
-        private int[] _indices =
+        private readonly int[] _indices =
         {
             0, 1,
             1, 2,
             2, 3,
             3, 0
         };
-        
+
+        private readonly float[] _vertices =
+        {
+            0f, 1f, 0f, 0f, 0f,
+            1f, -1f, 0f, 0f, 0f,
+            0f, -0.5f, 0f, 0f, 0f,
+            -1f, -1f, 0f, 0f, 0f
+        };
+
         public Model(string path) : base(path)
         {
         }
@@ -32,12 +33,14 @@ namespace AsteroidsApp
         {
             VertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices,
+                BufferUsageHint.StaticDraw);
 
             ElementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
-            
+            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices,
+                BufferUsageHint.StaticDraw);
+
             VertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayObject);
 
@@ -50,14 +53,13 @@ namespace AsteroidsApp
 
             var texCoordLocation = ServiceLocator.GetShader().GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float),
+                3 * sizeof(float));
         }
 
         public void RenderModel(int num)
         {
-            GL.DrawElements(PrimitiveType.Lines,8,DrawElementsType.UnsignedInt,0);
-            
+            GL.DrawElements(PrimitiveType.Lines, 8, DrawElementsType.UnsignedInt, 0);
         }
     }
 }

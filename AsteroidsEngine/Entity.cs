@@ -6,7 +6,20 @@ namespace AsteroidsEngine
     public sealed class Entity
     {
         private readonly LinkedList<UpdateComponent> _updateComponents;
+
+        private ICollider _collider;
         private RenderComponent _render;
+
+        private Matrix4 _transMatrix;
+
+
+        public Entity(Vector2 position)
+        {
+            _updateComponents = new LinkedList<UpdateComponent>();
+            Position = position;
+            Scale = 0.5f;
+        }
+
         public Vector2 Position { get; set; }
         public Vector2 Velocity { get; set; } = Vector2.Zero;
         public float Scale { get; set; }
@@ -17,22 +30,9 @@ namespace AsteroidsEngine
         public bool Visible { get; set; } = true;
         public int ComponentsCount => _updateComponents.Count;
 
-        private ICollider _collider;
-
-        private Matrix4 _transMatrix;
-        
-
-        public Entity(Vector2 position)
-        {
-            _updateComponents = new LinkedList<UpdateComponent>();
-            Position = position;
-            Scale = 0.5f;
-
-        }
-
         private void UpdateMatrix()
         {
-            _transMatrix = Matrix4.CreateScale(Scale) * 
+            _transMatrix = Matrix4.CreateScale(Scale) *
                            Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation)) *
                            Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
         }
@@ -41,10 +41,7 @@ namespace AsteroidsEngine
         {
             if (!Active) return;
             Position += Velocity * delta;
-            foreach (var component in _updateComponents)
-            {
-                component.Update(this, delta);
-            }
+            foreach (var component in _updateComponents) component.Update(this, delta);
             UpdateMatrix();
         }
 

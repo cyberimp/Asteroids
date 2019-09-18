@@ -18,12 +18,12 @@ namespace AsteroidsEngine
 
         public static Shader GetShader()
         {
-            return _shader ?? 
-                   throw new Exception("Shader not initialized", 
+            return _shader ??
+                   throw new Exception("Shader not initialized",
                        new NullReferenceException());
         }
-        
-        
+
+
         public static void SetEngine(Engine engine)
         {
             _engine = engine;
@@ -31,10 +31,11 @@ namespace AsteroidsEngine
 
         public static Engine GetEngine()
         {
-            return _engine ?? 
-                   throw new Exception("Engine not initialized", 
+            return _engine ??
+                   throw new Exception("Engine not initialized",
                        new NullReferenceException());
         }
+
         public static Controller GetController()
         {
             return _controller ?? (_controller = new Controller());
@@ -47,10 +48,9 @@ namespace AsteroidsEngine
 
         public static EntityCollection GetEntities()
         {
-            return _entities ?? 
-                   throw new Exception("Entities collection not initialized", 
+            return _entities ??
+                   throw new Exception("Entities collection not initialized",
                        new NullReferenceException());
-            
         }
 
         public static GuiVariables GetVariables()

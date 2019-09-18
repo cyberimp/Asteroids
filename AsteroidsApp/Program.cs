@@ -1,8 +1,8 @@
 ﻿namespace AsteroidsApp
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var engine = new PolyEngine();
             engine.Run(60);

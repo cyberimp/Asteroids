@@ -3,17 +3,17 @@ using OpenTK.Input;
 
 namespace AsteroidsApp
 {
-    public class PolyEngine: Engine
+    public class PolyEngine : Engine
     {
-        private Texture _texture;
         private Model _model;
+        private Texture _texture;
         public bool SpriteMode { get; private set; } = true;
 
         protected override void SetupResources()
         {
             base.SetupResources();
             ServiceLocator.SetEngine(this);
-            
+
             _model = new Model("model");
             _model.InitBuffers();
             _model.Use();
@@ -25,7 +25,7 @@ namespace AsteroidsApp
 
             ResourceLocator.SetTexture(_texture);
             ResourceLocator.SetModel(_model);
-            
+
             var numRenders = _texture.Length();
             for (var i = 0; i < numRenders; i++)
             {

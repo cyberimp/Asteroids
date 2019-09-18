@@ -7,18 +7,18 @@ using OpenTK.Graphics.OpenGL;
 
 namespace AsteroidsEngine
 {
-    public class Shader:IDisposable
+    public class Shader : IDisposable
     {
         private readonly int _handle;
 
         private readonly Dictionary<string, int> _uniformLocations;
 
-        
+
         public Shader(string vertexPath, string fragmentPath)
         {
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
-            
+
             string vertexShaderSource;
 
             using (var resource = a.GetManifestResourceStream(myName + "." + vertexPath))
@@ -34,14 +34,14 @@ namespace AsteroidsEngine
             {
                 fragmentShaderSource = reader.ReadToEnd();
             }
-            
+
             var vertexShader = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vertexShader, vertexShaderSource);
 
             var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fragmentShader, fragmentShaderSource);
-            
-            
+
+
             GL.CompileShader(vertexShader);
 
             var infoLogVert = GL.GetShaderInfoLog(vertexShader);
@@ -54,22 +54,22 @@ namespace AsteroidsEngine
 
             if (infoLogFrag != string.Empty)
                 Console.WriteLine(infoLogFrag);
-            
+
             _handle = GL.CreateProgram();
 
             GL.AttachShader(_handle, vertexShader);
             GL.AttachShader(_handle, fragmentShader);
 
             GL.LinkProgram(_handle);
-            
-            
+
+
             GL.DetachShader(_handle, vertexShader);
             GL.DetachShader(_handle, fragmentShader);
             GL.DeleteShader(fragmentShader);
             GL.DeleteShader(vertexShader);
-            
+
             GL.GetProgram(_handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
-            
+
             _uniformLocations = new Dictionary<string, int>();
 
             for (var i = 0; i < numberOfUniforms; i++)
@@ -79,7 +79,7 @@ namespace AsteroidsEngine
                 _uniformLocations.Add(key, location);
             }
         }
-        
+
         public void Use()
         {
             GL.UseProgram(_handle);
@@ -89,7 +89,7 @@ namespace AsteroidsEngine
         {
             return GL.GetAttribLocation(_handle, name);
         }
-        
+
         public void SetMatrix4(string name, Matrix4 data)
         {
             GL.UseProgram(_handle);
@@ -103,7 +103,7 @@ namespace AsteroidsEngine
         protected void Dispose(bool disposing)
         {
             if (_disposedValue) return;
-            
+
             GL.DeleteProgram(_handle);
 
             _disposedValue = true;
@@ -120,7 +120,7 @@ namespace AsteroidsEngine
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         #endregion
-        
     }
 }
