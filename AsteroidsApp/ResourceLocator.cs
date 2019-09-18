@@ -1,12 +1,12 @@
 ﻿using System;
-using AsteroidsEngine;
 
 namespace AsteroidsApp
 {
     public class ResourceLocator
     {
         private static Texture _texture;
-        
+        private static Model _model;
+
         public static void SetTexture(Texture texture)
         {
             _texture = texture;
@@ -19,5 +19,16 @@ namespace AsteroidsApp
                        new NullReferenceException());
         }
 
+        public static void SetModel(Model model)
+        {
+            _model = model;
+        }
+
+        public static Model GetModel()
+        {
+            return _model ?? 
+                   throw new Exception("Model not initialized", 
+                       new NullReferenceException());
+        }
     }
 }

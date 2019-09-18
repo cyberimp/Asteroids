@@ -13,8 +13,6 @@
       <EmbeddedResource Include="shader.vert" />
       <None Remove="shader.frag" />
       <EmbeddedResource Include="shader.frag" />
-      <None Remove="atlas.txt" />
-      <None Remove="atlas.png" />
     </ItemGroup>
 
     <ItemGroup>

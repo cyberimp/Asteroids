@@ -10,12 +10,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="asteroids.png" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <None Remove="atlas.png" />
       <EmbeddedResource Include="atlas.png" />
+      <None Remove="atlas.txt" />
       <EmbeddedResource Include="atlas.txt" />
+      <None Remove="model.png" />
+      <EmbeddedResource Include="model.png" />
+      <None Remove="model.txt" />
+      <EmbeddedResource Include="model.txt" />
     </ItemGroup>
 
 </Project>

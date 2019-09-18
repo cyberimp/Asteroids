@@ -4,21 +4,24 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using AsteroidsEngine;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Bitmap = System.Drawing.Bitmap;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 using Rectangle = System.Drawing.Rectangle;
 
-namespace AsteroidsEngine
+namespace AsteroidsApp
 {
    public class Texture:IDisposable
     {
         private readonly int _handle;
-        
-        private int _vertexBufferObject;
-        private int _vertexArrayObject;
-        private int _elementBufferObject;
+
+        private readonly string _path;
+
+        protected int VertexBufferObject;
+        protected int VertexArrayObject;
+        protected int ElementBufferObject;
         private float[] _vertices;
         private uint[] _indices;
 
@@ -28,14 +31,14 @@ namespace AsteroidsEngine
         public Texture(string path)
         {
             _names = new List<string>();
-                
+            _path = path;    
             _handle = GL.GenTexture();
 
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
             Use();
 
-            using (var stream = a.GetManifestResourceStream(myName + "." + path + ".png"))
+            using (var stream = a.GetManifestResourceStream(myName + "." + _path + ".png"))
             using (var image = new Bitmap(stream)) {
                 var data = image.LockBits(
                     new Rectangle(0, 0, image.Width, image.Height),
@@ -61,11 +64,9 @@ namespace AsteroidsEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-            GenIndices(path);
-            InitBuffers();
         }
 
-        private void GenIndices(string path)
+        public virtual void GenIndices()
         {
             var indices = new List<uint>();
             uint firstIndex = 0;
@@ -73,7 +74,7 @@ namespace AsteroidsEngine
             var vertices = new List<float>();
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
-            using (var stream = a.GetManifestResourceStream(myName + "." + path + ".txt"))
+            using (var stream = a.GetManifestResourceStream(myName + "." + _path + ".txt"))
             using (var reader = new StreamReader(stream ?? 
                                                  throw new FileNotFoundException("atlas not found")))
             {
@@ -155,21 +156,21 @@ namespace AsteroidsEngine
             }
         }
 
-        public void InitBuffers()
+        public virtual void InitBuffers()
         {
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+            VertexBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
 
-            _elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
+            ElementBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
             
-            _vertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArrayObject);
+            VertexArrayObject = GL.GenVertexArray();
+            GL.BindVertexArray(VertexArrayObject);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
 
             var vertexLocation = ServiceLocator.GetShader().GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
@@ -204,9 +205,9 @@ namespace AsteroidsEngine
         {
             if (_disposedValue) return;
             
-            GL.DeleteBuffer(_vertexArrayObject);
-            GL.DeleteBuffer(_vertexBufferObject);
-            GL.DeleteBuffer(_elementBufferObject);
+            GL.DeleteBuffer(VertexArrayObject);
+            GL.DeleteBuffer(VertexBufferObject);
+            GL.DeleteBuffer(ElementBufferObject);
             GL.DeleteTexture(_handle);
 
             _disposedValue = true;
@@ -214,9 +215,9 @@ namespace AsteroidsEngine
 
         ~Texture()
         {
-            GL.DeleteBuffer(_vertexArrayObject);
-            GL.DeleteBuffer(_vertexBufferObject);
-            GL.DeleteBuffer(_elementBufferObject);
+            GL.DeleteBuffer(VertexArrayObject);
+            GL.DeleteBuffer(VertexBufferObject);
+            GL.DeleteBuffer(ElementBufferObject);
             GL.DeleteTexture(_handle);
         }
 

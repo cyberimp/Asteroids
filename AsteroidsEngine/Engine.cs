@@ -38,14 +38,14 @@ namespace AsteroidsEngine
             ServiceLocator.SetEngine(this);
             SetupResources();
 
+            ServiceLocator.SetEntities(Entities);
+
             Entities.CreatePlayer();
             Entities.CreateAsteroidSpawner();
             Entities.CreateLaserCounter();
             Entities.CreateScoreUi();
             Entities.CreateBanner();
             
-
-            ServiceLocator.SetEntities(Entities);
             base.OnLoad(e);
         }
 
