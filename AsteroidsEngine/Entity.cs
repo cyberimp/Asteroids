@@ -11,7 +11,8 @@ namespace AsteroidsEngine
         private Matrix4 _transMatrix;
         private Vector2 _position;
         private float _scale;
-        
+        private float _rotation;
+
         public Vector2 Position { get => _position;
             set { _position = value; UpdateMatrix(); }
         }
@@ -19,7 +20,9 @@ namespace AsteroidsEngine
         public float Scale { get => _scale;
             set { _scale = value; UpdateMatrix(); }
         }
-        public float Rotation { get; set; }
+        public float Rotation { get => _rotation;
+            set { _rotation = value; UpdateMatrix(); }
+        }
         public bool Active { get; set; } = true;
         public float Timer { get; set; }
         public string Tag { get; set; }
