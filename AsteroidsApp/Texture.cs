@@ -28,7 +28,6 @@ namespace AsteroidsApp
         protected int VertexBufferObject;
         private protected float[] Vertices;
 
-        // Create texture from path.
         public Texture(string path)
         {
             _names = new List<string>();
@@ -70,13 +69,11 @@ namespace AsteroidsApp
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         }
 
-
-        public void Dispose()
+        public int Length()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            return _names.Count;
         }
-
+        
         public virtual void GenIndices()
         {
             var indices = new List<uint>();
@@ -225,6 +222,12 @@ namespace AsteroidsApp
             _disposedValue = true;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         ~Texture()
         {
             GL.DeleteBuffer(VertexArrayObject);
@@ -233,9 +236,5 @@ namespace AsteroidsApp
             GL.DeleteTexture(_handle);
         }
 
-        public int Length()
-        {
-            return _names.Count;
-        }
     }
 }

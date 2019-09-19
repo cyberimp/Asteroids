@@ -1,4 +1,5 @@
-﻿using AsteroidsEngine;
+﻿using System;
+using AsteroidsEngine;
 using OpenTK.Input;
 
 namespace AsteroidsApp
@@ -53,6 +54,13 @@ namespace AsteroidsApp
             {
                 _model.Use();
             }
+        }
+
+        protected override void OnUnload(EventArgs e)
+        {
+            _texture.Dispose();
+            _model.Dispose();
+            base.OnUnload(e);
         }
     }
 }
