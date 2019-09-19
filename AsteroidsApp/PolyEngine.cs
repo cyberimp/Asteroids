@@ -23,14 +23,11 @@ namespace AsteroidsApp
             _texture.GenIndices();
             _texture.InitBuffers();
             _texture.Use();
-
-            ResourceLocator.SetTexture(_texture);
-            ResourceLocator.SetModel(_model);
-
+            
             var numRenders = _texture.Length();
             for (var i = 0; i < numRenders; i++)
             {
-                var render = new PolyRenderComponent(i);
+                var render = new PolyRenderComponent(i, _model, _texture);
                 Entities.AddRender(render);
             }
         }

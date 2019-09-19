@@ -7,10 +7,10 @@ namespace AsteroidsApp
         private readonly Model _model;
         private readonly Texture _texture;
 
-        public PolyRenderComponent(int quadNum) : base(quadNum)
+        public PolyRenderComponent(int quadNum, Model model, Texture texture) : base(quadNum)
         {
-            _texture = ResourceLocator.GetTexture();
-            _model = ResourceLocator.GetModel();
+            _texture = texture;
+            _model = model;
         }
 
 
