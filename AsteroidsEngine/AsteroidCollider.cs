@@ -21,7 +21,7 @@
                     {
                         var speed = entity1.Velocity.LengthFast * 1.5f;
                         entity1.Velocity = entity2.Velocity.PerpendicularLeft.Normalized() * speed;
-                        var asteroid = ServiceLocator.GetEntities().CreateAsteroid(false);
+                        var asteroid = ServiceLocator.GetEntities().CreateAsteroid();
                         asteroid.Position = entity1.Position;
                         asteroid.Scale = entity1.Scale;
                         asteroid.Velocity = entity2.Velocity.PerpendicularRight.Normalized() * speed;

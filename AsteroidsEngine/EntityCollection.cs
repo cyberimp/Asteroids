@@ -71,21 +71,20 @@ namespace AsteroidsEngine
             return _colliders[name];
         }
 
-        private Entity ReuseOrCreate(string tag, int render, bool visible = true)
+        private Entity ReuseOrCreate(string tag, int render)
         {
-            var result = ReuseOrCreate(tag, visible);
+            var result = ReuseOrCreate(tag);
 
             result.SetRender(_renders[render]);
 
             return result;
         }
 
-        private Entity ReuseOrCreate(string tag, bool visible = true)
+        private Entity ReuseOrCreate(string tag)
         {
             var result = _collection.FirstOrDefault(entity => entity.Tag == tag && !entity.Active);
             if (result != null)
             {
-                result.Visible = visible;
                 result.Active = true;
             }
             else
@@ -166,9 +165,9 @@ namespace AsteroidsEngine
             player.SetCollider(GetCollider("ship"));
         }
 
-        public Entity CreateAsteroid(bool visible = true)
+        public Entity CreateAsteroid()
         {
-            var asteroid = ReuseOrCreate("asteroid", 16, visible);
+            var asteroid = ReuseOrCreate("asteroid", 16);
             asteroid.Scale = 0.1f;
             asteroid.Position = -Vector2.UnitX * 0.8f;
             asteroid.Velocity = Vector2.One * 0.2f;

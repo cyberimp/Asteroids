@@ -1,81 +1,44 @@
 ﻿@startuml
-
-class Entity{
-    -EntityComponent[] _components
-    -float _hitboxSquareRadius
-    -_layer
-    -_tag
-    ..transformations..
-    -Vector2 _position
-    -float _scale
-    -float _rotation
-    ..speeds..
-    -Vector2 _velocity
-    -float _rotationVelocity
-    ..state..
-    -bool _active
-    --
-    +void Render()
-    +void Update(float delta)
-    +void setActive(bool state)
-    +bool Collide(Entity)
+Class Engine{
+    -Shader _shader
+    #EntityCollection Entities
+    -bool _waitRestart
+    #Engine(int xres, int yres)
+    #void OnLoad()
+    #void SetupResources()
+    #void OnUnload()
+    #void OnResize()
+    #void OnRenderFrame(FrameEventArgs e)
+    #void OnUpdateFrame(FrameEventArgs e)
+    #void OnKeyDown(KeyboardKeyEventArgs e)
+    #void OnKeyUp(KeyboardKeyEventArgs e)
+    -void RestartGame()
+    +void GameOver()
 }
 
-Entity *- EntityComponent
-
-abstract class EntityComponent{
-    +bool Active
-    {abstract} +void Render(Entity)
-    {abstract} +void Update(Entity, delta)  
+Interface ICollider{
+    {abstract}+void OnCollide(Entity entity1, Entity entity2)
 }
 
-EntityComponent <|-- RenderComponent
-EntityComponent <|-- ControlComponent
-EntityComponent <|-- DecayComponent
+ICollider <|- AsteroidCollider
+ICollider <|-- BulletCollider
+ICollider <|-- ShipCollider
+ICollider <|-- UfoCollider
 
-class ControlComponent{
-    -Key[] binds
-    +update(Entity, delta)
+Class AsteroidCollider{
+    +void OnCollide(Entity entity1, Entity entity2)
 }
 
-class DecayComponent{
-    -float _lifetime
-    +update(Entity, delta)
+Class BulletCollider{
+    +void OnCollide(Entity entity1, Entity entity2)
 }
 
-ParticleGeneratorComponent --|> EntityComponent
-
-class ParticleGeneratorComponent{
-  
+Class ShipCollider{
+    +void OnCollide(Entity entity1, Entity entity2)
 }
 
-EntityComponent <|-- AIComponent
-
-class AIComponent{
-    -_target
-    +void Update(Entity, delta)
-}
-
-Particle o- ParticlePool
-
-class Particle{
-    -Vector2 _position
-    -Vector2 _velocity
-    -_lifetime
-    +void Render()
-    +void Update()
-}
-
-class ParticlePool{
-    -Particle[] _collection
-    +ActivateParticle(Vector2 position, Vector2 velocity)
-}
-
-EntityPool *- Entity
-
-class EntityPool{
-    -Entity[] _collection
-    +Entity FindWithComponent(Type)
+Class UfoCollider{
+    +void OnCollide(Entity entity1, Entity entity2)
 }
 
 @enduml

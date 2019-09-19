@@ -167,7 +167,7 @@ namespace AsteroidsApp
             }
         }
 
-        public virtual void InitBuffers()
+        public void InitBuffers()
         {
             VertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
@@ -182,6 +182,10 @@ namespace AsteroidsApp
             VertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayObject);
 
+        }
+
+        public void Use(TextureUnit unit = TextureUnit.Texture0)
+        {
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
 
@@ -193,10 +197,7 @@ namespace AsteroidsApp
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float),
                 3 * sizeof(float));
-        }
 
-        public void Use(TextureUnit unit = TextureUnit.Texture0)
-        {
             GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, _handle);
         }

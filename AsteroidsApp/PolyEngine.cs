@@ -17,7 +17,6 @@ namespace AsteroidsApp
             _model = new Model("model");
             _model.GenIndices();
             _model.InitBuffers();
-            _model.Use();
 
             _texture = new Texture("atlas");
             _texture.GenIndices();
@@ -48,12 +47,10 @@ namespace AsteroidsApp
             SpriteMode = !SpriteMode;
             if (SpriteMode)
             {
-                _texture.InitBuffers();
                 _texture.Use();
             }
             else
             {
-                _model.InitBuffers();
                 _model.Use();
             }
         }

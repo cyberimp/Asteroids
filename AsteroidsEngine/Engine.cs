@@ -15,13 +15,9 @@ namespace AsteroidsEngine
         private readonly Color4 _backColor;
 
         private Shader _shader;
-
-//        private Texture _texture;
-        private bool _waitRestart;
-
         protected EntityCollection Entities;
 
-
+        private bool _waitRestart;
         protected Engine(int xRes = DefaultXRes, int yRes = DefaultYRes) :
             base(xRes, yRes, GraphicsMode.Default, AppName, GameWindowFlags.FixedWindow)
         {
