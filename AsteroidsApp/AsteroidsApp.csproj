@@ -17,7 +17,10 @@
       <None Remove="model.png" />
       <EmbeddedResource Include="model.png" />
       <None Remove="model.txt" />
-      <EmbeddedResource Include="model.txt" />
+      <None Remove="model.points" />
+      <EmbeddedResource Include="model.points" />
+      <None Remove="model.lines" />
+      <EmbeddedResource Include="model.lines" />
     </ItemGroup>
 
 </Project>

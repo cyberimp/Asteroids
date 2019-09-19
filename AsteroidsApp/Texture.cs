@@ -16,30 +16,30 @@ namespace AsteroidsApp
     {
         private readonly int _handle;
 
-        private readonly string _path;
+        private readonly List<string> _names;
+
+        private protected readonly string Path;
 
         private bool _disposedValue;
-        private uint[] _indices;
-
-        private readonly List<string> _names;
-        private float[] _vertices;
         protected int ElementBufferObject;
+        private protected uint[] Indices;
         protected int VertexArrayObject;
 
         protected int VertexBufferObject;
+        private protected float[] Vertices;
 
         // Create texture from path.
         public Texture(string path)
         {
             _names = new List<string>();
-            _path = path;
+            Path = path;
             _handle = GL.GenTexture();
 
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
             Use();
 
-            using (var stream = a.GetManifestResourceStream(myName + "." + _path + ".png"))
+            using (var stream = a.GetManifestResourceStream(myName + "." + Path + ".png"))
             using (var image = new Bitmap(stream))
             {
                 var data = image.LockBits(
@@ -85,7 +85,7 @@ namespace AsteroidsApp
             var vertices = new List<float>();
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
-            using (var stream = a.GetManifestResourceStream(myName + "." + _path + ".txt"))
+            using (var stream = a.GetManifestResourceStream(myName + "." + Path + ".txt"))
             using (var reader = new StreamReader(stream ??
                                                  throw new FileNotFoundException("atlas not found")))
             {
@@ -162,8 +162,8 @@ namespace AsteroidsApp
                     ++line;
                 }
 
-                _vertices = vertices.ToArray();
-                _indices = indices.ToArray();
+                Vertices = vertices.ToArray();
+                Indices = indices.ToArray();
             }
         }
 
@@ -171,12 +171,12 @@ namespace AsteroidsApp
         {
             VertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices,
+            GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices,
                 BufferUsageHint.StaticDraw);
 
             ElementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices,
+            GL.BufferData(BufferTarget.ElementArrayBuffer, Indices.Length * sizeof(uint), Indices,
                 BufferUsageHint.StaticDraw);
 
             VertexArrayObject = GL.GenVertexArray();
