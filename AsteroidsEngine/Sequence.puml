@@ -1,0 +1,61 @@
+﻿@startuml
+Program -> PolyEngine: Main()
+activate PolyEngine
+group PolyEngine.OnLoad() 
+    PolyEngine -> EntityCollection
+    activate EntityCollection
+    collections UpdateComponent
+    EntityCollection -> UpdateComponent
+    activate UpdateComponent
+    UpdateComponent -> EntityCollection: FillComponents()
+    collections ICollider
+    EntityCollection -> ICollider
+    activate ICollider
+    ICollider -> EntityCollection: FillColliders()
+    PolyEngine -> Shader
+    activate Shader
+    PolyEngine -> Model
+    activate Model
+    PolyEngine -> Texture
+    activate Texture
+    collections PolyRenderComponent
+    PolyEngine -> PolyRenderComponent
+    activate PolyRenderComponent
+    
+    PolyRenderComponent -> EntityCollection: insert
+    collections Entity
+    EntityCollection -> Entity
+    activate Entity
+end
+
+loop MainLoop
+    group OnUpdate
+        PolyEngine -> EntityCollection: OnUpdateFrame()
+        EntityCollection -> Entity: Collide()
+        Entity -> ICollider: Collide()
+        EntityCollection -> Entity: Update()
+        Entity -> UpdateComponent: Update()
+    end
+    
+    group OnRender
+        PolyEngine -> EntityCollection: OnRenderFrame()
+        EntityCollection -> Entity: Render()
+        Entity -> Shader: SetMatrix4()
+        Entity -> PolyRenderComponent: Render()
+        alt RenderSprite
+            PolyRenderComponent -> Texture : RenderQuad()
+        else
+            PolyRenderComponent -> Model : RenderModel()
+        end
+    end
+end
+
+group PolyEngine.OnUnload()
+    PolyEngine -> Texture
+    destroy Texture
+    PolyEngine -> Model
+    destroy Model
+    PolyEngine -> Shader
+    destroy Shader
+end
+@enduml
