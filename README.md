@@ -1,7 +1,7 @@
 # Asteroids
 Clone of famous Atari game
 
-##How to launch
+## How to launch
 1. Install .NET Core 2.2 SDK from https://dotnet.microsoft.com/download/dotnet-core/2.2
 2. Open your favorite command-line processor and go to *AsteroidsApp* directory
 3. Run command `dotnet run .`
