@@ -130,7 +130,10 @@ namespace AsteroidsEngine
         {
             Entities.CleanUp();
             Entities.CreatePlayer();
-            Entities.FindByTag("spawner").Timer = 0.0f;
+            var spawner = Entities.FindByTag("spawner");
+            spawner.Timer = 0.0f;
+            spawner.Active = true;
+
             ServiceLocator.GetVariables().LaserCharges = MaxLaserCharges;
             ServiceLocator.GetVariables().Score = 0;
             ServiceLocator.GetVariables().GameOver = false;
@@ -165,6 +168,7 @@ namespace AsteroidsEngine
 
         public void GameOver()
         {
+            Entities.FindByTag("spawner").Active = false;
             ServiceLocator.GetVariables().GameOver = true;
             _waitRestart = true;
         }
