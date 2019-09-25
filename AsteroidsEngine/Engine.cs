@@ -126,20 +126,7 @@ namespace AsteroidsEngine
             base.OnKeyDown(e);
         }
 
-        private void RestartGame()
-        {
-            Entities.CleanUp();
-            Entities.CreatePlayer();
-            var spawner = Entities.FindByTag("spawner");
-            spawner.Timer = 0.0f;
-            spawner.Active = true;
-
-            ServiceLocator.GetVariables().LaserCharges = MaxLaserCharges;
-            ServiceLocator.GetVariables().Score = 0;
-            ServiceLocator.GetVariables().GameOver = false;
-            _waitRestart = false;
-        }
-
+        
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             var controller = ServiceLocator.GetController();
@@ -164,6 +151,20 @@ namespace AsteroidsEngine
             }
 
             base.OnKeyDown(e);
+        }
+
+private void RestartGame()
+        {
+            Entities.CleanUp();
+            Entities.CreatePlayer();
+            var spawner = Entities.FindByTag("spawner");
+            spawner.Timer = 0.0f;
+            spawner.Active = true;
+
+            ServiceLocator.GetVariables().LaserCharges = MaxLaserCharges;
+            ServiceLocator.GetVariables().Score = 0;
+            ServiceLocator.GetVariables().GameOver = false;
+            _waitRestart = false;
         }
 
         public void GameOver()
