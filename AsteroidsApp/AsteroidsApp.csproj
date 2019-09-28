@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,13 +14,13 @@
       <EmbeddedResource Include="atlas.png" />
       <None Remove="atlas.txt" />
       <EmbeddedResource Include="atlas.txt" />
-      <None Remove="model.png" />
-      <EmbeddedResource Include="model.png" />
-      <None Remove="model.txt" />
-      <None Remove="model.points" />
-      <EmbeddedResource Include="model.points" />
-      <None Remove="model.lines" />
-      <EmbeddedResource Include="model.lines" />
+      <None Remove="poly.png" />
+      <EmbeddedResource Include="poly.png" />
+      <None Remove="poly.txt" />
+      <None Remove="poly.points" />
+      <EmbeddedResource Include="poly.points" />
+      <None Remove="poly.lines" />
+      <EmbeddedResource Include="poly.lines" />
     </ItemGroup>
 
 </Project>

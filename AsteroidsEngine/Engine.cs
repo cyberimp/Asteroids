@@ -47,7 +47,7 @@ namespace AsteroidsEngine
 
         protected virtual void SetupResources()
         {
-            _shader = new Shader("shader.vert", "shader.frag");
+            _shader = new Shader("shader1.vert", "shader1.frag");
             ServiceLocator.SetShader(_shader);
             _shader.Use();
 

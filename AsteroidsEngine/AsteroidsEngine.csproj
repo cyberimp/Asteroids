@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,10 +9,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="shader.vert" />
-      <EmbeddedResource Include="shader.vert" />
-      <None Remove="shader.frag" />
-      <EmbeddedResource Include="shader.frag" />
+      <None Remove="shader1.vert" />
+      <EmbeddedResource Include="shader1.vert" />
+      <None Remove="shader1.frag" />
+      <EmbeddedResource Include="shader1.frag" />
     </ItemGroup>
 
     <ItemGroup>

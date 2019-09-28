@@ -15,7 +15,7 @@ namespace AsteroidsApp
             base.SetupResources();
             ServiceLocator.SetEngine(this);
 
-            _model = new Model("model");
+            _model = new Model("poly");
             _model.GenIndices();
             _model.InitBuffers();
 
