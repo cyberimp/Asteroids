@@ -12,7 +12,7 @@ namespace AsteroidsEngine
         private Vector2 _position;
         private float _scale;
         private float _rotation;
-
+        private readonly Shader _shader;
         public Vector2 Position { get => _position;
             set { _position = value; UpdateMatrix(); }
         }
@@ -28,11 +28,13 @@ namespace AsteroidsEngine
         public Tags Tag { get; set; }
         public bool Visible { get; set; } = true;
         public int ComponentsCount => _updateComponents.Count;
-        public Entity(Vector2 position)
+
+        public Entity(Shader shader)
         {
             _updateComponents = new LinkedList<UpdateComponent>();
-            Position = position;
+            Position = Vector2.Zero;
             Scale = 0.5f;
+            _shader = shader;
         }
 
         private void UpdateMatrix()
@@ -52,7 +54,7 @@ namespace AsteroidsEngine
         public void Render()
         {
             if (!Active || !Visible || _render == null) return;
-            ServiceLocator.GetShader().SetMatrix4("transform", _transMatrix);
+            _shader.SetMatrix4("transform", _transMatrix);
             _render.Render();
         }
 

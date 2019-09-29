@@ -2,16 +2,22 @@
 {
     public class AsteroidCollider : ICollider
     {
+        private GuiVariables _variables;
+        private EntityCollection _parent;
+        public AsteroidCollider(GuiVariables variables, EntityCollection parent){
+            _variables = variables;
+            _parent = parent;
+        }
         public void OnCollide(Entity entity1, Entity entity2)
         {
             switch (entity2.Tag)
             {
                 case Tags.Laser:
                     entity1.Active = false;
-                    ServiceLocator.GetVariables().Score += 1;
+                    _variables.Score += 1;
                     break;
                 case Tags.Bullet:
-                    ServiceLocator.GetVariables().Score += 1;
+                    _variables.Score += 1;
                     entity1.Scale /= 2.0f;
                     if (entity1.Scale < 0.025f)
                     {
@@ -21,7 +27,7 @@
                     {
                         var speed = entity1.Velocity.LengthFast * 1.5f;
                         entity1.Velocity = entity2.Velocity.PerpendicularLeft.Normalized() * speed;
-                        var asteroid = ServiceLocator.GetEntities().CreateAsteroid();
+                        var asteroid = _parent.CreateAsteroid();
                         asteroid.Position = entity1.Position;
                         asteroid.Scale = entity1.Scale;
                         asteroid.Velocity = entity2.Velocity.PerpendicularRight.Normalized() * speed;

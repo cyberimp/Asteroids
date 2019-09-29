@@ -5,9 +5,11 @@
 package AsteroidsEngine{
 
     Class Engine{
-        -Shader _shader
+        #Shader _shader
         #EntityCollection Entities
         -bool _waitRestart
+        +GuiVariables Variables
+        +Controller CurController
         #Engine(int xres, int yres)
         #void OnLoad()
         #void SetupResources()
@@ -29,6 +31,7 @@ package AsteroidsEngine{
         -Vector2 _position
         -float _scale
         -float _rotation
+        -Shader _shader
         +Vector2 Position
         +float Scale
         +float Rotation
@@ -38,7 +41,7 @@ package AsteroidsEngine{
         +Tags Tag
         +bool Visible
         +int ComponentsCount => _updateComponents.Count;
-        +Entity(Vector2 position)
+        +Entity(Shader shader)
         -void UpdateMatrix()
         +void Update(float delta)
         +void Render()
@@ -48,18 +51,21 @@ package AsteroidsEngine{
         +void Collide(Entity entity2)
     }
     
+    Entity o-- Shader
+
     Class EntityCollection{
         -List<List<Entity> > _collection
         -Dictionary<string, ICollider> _colliders
         -Dictionary<string, UpdateComponent> _components
         -List<Entity> _newCollection
         -List<RenderComponent> _renders
-        -string[] _renderTagOrder
+        -Shader _shader
+        -Engine _engine
         --
-        +EntityCollection()
-        -void FillColliders()
+        +EntityCollection(Shader shader, Engine engine)
+        +void FillColliders()
+        +void FillComponents()
         +void AddRender(RenderComponent renderComponent)
-        -void FillComponents()
         -void AddComponent(string name, UpdateComponent component)
         -UpdateComponent GetComponent(string name)
         -void AddCollider(string name, ICollider collider)
@@ -84,6 +90,9 @@ package AsteroidsEngine{
         +void CreateScoreUi()
     }
     
+    EntityCollection o-- Shader
+    EntityCollection o-* Engine
+
     Class GuiVariables{
         +int Score
         +int LaserCharges
@@ -94,24 +103,6 @@ package AsteroidsEngine{
         #int QuadNum
         +RenderComponent(int num)
         +Render()
-    }
-    
-    class ServiceLocator{
-        -{static} Shader _shader
-        -{static} Engine _engine
-        -{static} Controller _controller
-        -{static} EntityCollection _entities
-        -{static} GuiVariables _variables
-        +{static} Shader GetShader()
-        +{static} void SetShader(Shader shader)
-        +{static} Engine GetEngine()
-        +{static} void SetEngine(Engine engine)
-        +{static} Controller GetController()
-        +{static} void SetController(Controller controller)
-        +{static} EntityCollection GetEntityCollection()
-        +{static} void SetEntityCollection(EntityCollection collection)
-        +{static} GuiVariables GetGuiVariables()
-        +{static} void SetGuiVariables(GuiVariables variables)
     }
     
     class Controller{
@@ -142,40 +133,76 @@ package AsteroidsEngine{
     
     class AsteroidSpawnerComponent{
         -Random _rnd
+        -EntityCollection _parent
+        +AsteroidSpawnerComponent(EntityCollection parent)
         +void Update(Entity entity, float delta)
     }
+
+    AsteroidSpawnerComponent o--* EntityCollection
     
     class DecayComponent{
         +void Update(Entity entity, float delta)
     }
+
+    DecayComponent --* EntityCollection
     
     class GameOverComponent{
+        -GuiVariables _variables
+        +GameOverComponent(GuiVariables variables)
         +void Update(Entity entity, float delta)
     }
+    GameOverComponent o-- GuiVariables
+    GameOverComponent --* EntityCollection
     
     class HyperDriveComponent{
         +void Update(Entity entity, float delta)
     }
+    HyperDriveComponent --* EntityCollection
     
     class LaserChargeComponent{
+        -GuiVariables _variables
+        +LaserChargeComponent(GuiVariables variables)
         +void Update(Entity entity, float delta)
     }
+
+    LaserChargeComponent o-- GuiVariables
+    LaserChargeComponent --* EntityCollection
     
     class PlayerComponent{
+        -GuiVariables _variables
+        -Controller _controller
+        -EntityCollection _parent
         -const float LaserChargeTime
         -float _bulletCd;
         -float _laserCd;
+        +PlayerComponent(GuiVariables )
         +void Update(Entity entity, float delta)
     }
+
+    PlayerComponent o-- GuiVariables
+    PlayerComponent o-- Controller
+    PlayerComponent o--* EntityCollection
+    
     
     class ScoreDigitComponent{
+        -GuiVariables _variables
+        -EntityCollection _parent
+        +ScoreDigitComponent(GuiVariables variables, EntityCollection parent)
         +void Update(Entity entity, float delta)
     }
+
+    ScoreDigitComponent o-- GuiVariables
+    ScoreDigitComponent o--* EntityCollection
     
     class UfoAiComponent{
         -Entity _target
+        -EntityCollection _parent
+        +UfoAiComponent(EntityCollection _parent)
         +void Update(Entity entity, float delta)
     }
+    UfoAiComponent o--*EntityCollection
+    UfoAiComponent o-- Entity
+
     
     UpdateComponent <|-- AsteroidSpawnerComponent
     UpdateComponent <|-- DecayComponent
@@ -191,18 +218,14 @@ package AsteroidsEngine{
     EntityCollection *-- RenderComponent
     EntityCollection *-- UpdateComponent
     
-    Engine *- EntityCollection
     Engine *-- Shader
+    Engine *- Controller
+    Engine *- GuiVariables
     
     Entity o-- ICollider
     Entity o- UpdateComponent
     Entity o- RenderComponent
-    
-    ServiceLocator o-- Engine
-    ServiceLocator o- GuiVariables
-    ServiceLocator o- EntityCollection
-    ServiceLocator o- Controller
-    ServiceLocator o- Shader
+
     
     
     
@@ -218,20 +241,35 @@ package AsteroidsEngine{
     ICollider <|-- UfoCollider
     
     class AsteroidCollider{
+        -GuiVariables _variables
+        -EntityCollection _parent
+        +AsteroidCollider(GuiVariables variables, EntityCollection parent)
         +void OnCollide(Entity entity1, Entity entity2)
     }
+    AsteroidCollider o--* EntityCollection
+    AsteroidCollider o-- GuiVariables
     
     class BulletCollider{
         +void OnCollide(Entity entity1, Entity entity2)
     }
+    BulletCollider --* EntityCollection
     
     class ShipCollider{
+        -Engine _engine
+        +ShipCollider(Engine engine)
         +void OnCollide(Entity entity1, Entity entity2)
     }
+    ShipCollider o-- Engine
+    ShipCollider --* EntityCollection
     
     class UfoCollider{
+        -GuiVariables _variables
+        +UfoCollider(GuiVariables variables)
         +void OnCollide(Entity entity1, Entity entity2)
     }
+
+    UfoCollider o-- GuiVariables
+    UfoCollider --* EntityCollection
 }
 
 package AsteroidsApp{
@@ -248,7 +286,8 @@ package AsteroidsApp{
     class PolyRenderComponent{
         -Model _model
         -Texture _texture
-        +PolyRenderComponent(int quadNum, Model model, Texture texture)
+        -PolyEngine _engine
+        +PolyRenderComponent(int quadNum, Model model, Texture texture, PolyEngine engine)
         +void Render()
         -void RenderSprite()
         -void RenderModel()
@@ -264,7 +303,8 @@ package AsteroidsApp{
         #int VertexArrayObject
         #int VertexBufferObject
         #float[] Vertices
-        +Texture(string path)
+        #Shader _shader
+        +Texture(Shader shader, string path)
         +int Length()
         +void GenIndices()
         +void InitBuffers()
@@ -296,8 +336,11 @@ package AsteroidsApp{
     
     PolyEngine *-- Texture
     PolyEngine *- Model
+    PolyEngine *-o PolyRenderComponent
 
     PolyRenderComponent o- Texture
     PolyRenderComponent o-- Model
+
+    Texture o--- Shader
 }
 @enduml

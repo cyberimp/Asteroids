@@ -14,14 +14,18 @@ namespace AsteroidsEngine
         public const int MaxLaserCharges = 3;
         private readonly Color4 _backColor;
 
-        private Shader _shader;
+        protected Shader _shader;
         protected EntityCollection Entities;
+        public GuiVariables Variables {get;}
+        public Controller CurController{get;}
 
         private bool _waitRestart;
         protected Engine(int xRes = DefaultXRes, int yRes = DefaultYRes) :
             base(xRes, yRes, GraphicsMode.Default, AppName, GameWindowFlags.FixedWindow)
         {
             _backColor = new Color4(13, 8, 13, 255); //Eroge Copper Black
+            Variables = new GuiVariables();
+            CurController = new Controller();
         }
 
 
@@ -31,10 +35,7 @@ namespace AsteroidsEngine
 
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            ServiceLocator.SetEngine(this);
             SetupResources();
-
-            ServiceLocator.SetEntities(Entities);
 
             Entities.CreatePlayer();
             Entities.CreateAsteroidSpawner();
@@ -48,10 +49,11 @@ namespace AsteroidsEngine
         protected virtual void SetupResources()
         {
             _shader = new Shader("shader1.vert", "shader1.frag");
-            ServiceLocator.SetShader(_shader);
             _shader.Use();
 
-            Entities = new EntityCollection();
+            Entities = new EntityCollection(_shader, this);
+            Entities.FillColliders();
+            Entities.FillComponents();
         }
 
         protected override void OnUnload(EventArgs e)
@@ -97,26 +99,25 @@ namespace AsteroidsEngine
 
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
-            var controller = ServiceLocator.GetController();
             switch (e.Key)
             {
                 case Key.Escape:
                     Exit();
                     break;
                 case Key.Left:
-                    controller.Rotation = -1;
+                    CurController.Rotation = -1;
                     break;
                 case Key.Right:
-                    controller.Rotation = 1;
+                    CurController.Rotation = 1;
                     break;
                 case Key.Up:
-                    controller.Thrust = true;
+                    CurController.Thrust = true;
                     break;
                 case Key.Z:
-                    controller.Fire1 = true;
+                    CurController.Fire1 = true;
                     break;
                 case Key.X:
-                    controller.Fire2 = true;
+                    CurController.Fire2 = true;
                     break;
                 case Key.F:
                     if (_waitRestart) RestartGame();
@@ -129,24 +130,22 @@ namespace AsteroidsEngine
         
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
-            var controller = ServiceLocator.GetController();
-
             switch (e.Key)
             {
                 case Key.Left:
-                    controller.Rotation = 0;
+                    CurController.Rotation = 0;
                     break;
                 case Key.Right:
-                    controller.Rotation = 0;
+                    CurController.Rotation = 0;
                     break;
                 case Key.Up:
-                    controller.Thrust = false;
+                    CurController.Thrust = false;
                     break;
                 case Key.Z:
-                    controller.Fire1 = false;
+                    CurController.Fire1 = false;
                     break;
                 case Key.X:
-                    controller.Fire2 = false;
+                    CurController.Fire2 = false;
                     break;
             }
 
@@ -161,16 +160,16 @@ private void RestartGame()
             spawner.Timer = 0.0f;
             spawner.Active = true;
 
-            ServiceLocator.GetVariables().LaserCharges = MaxLaserCharges;
-            ServiceLocator.GetVariables().Score = 0;
-            ServiceLocator.GetVariables().GameOver = false;
+            Variables.LaserCharges = MaxLaserCharges;
+            Variables.Score = 0;
+            Variables.GameOver = false;
             _waitRestart = false;
         }
 
         public void GameOver()
         {
             Entities.FindByTag(Tags.Spawner).Active = false;
-            ServiceLocator.GetVariables().GameOver = true;
+            Variables.GameOver = true;
             _waitRestart = true;
         }
     }

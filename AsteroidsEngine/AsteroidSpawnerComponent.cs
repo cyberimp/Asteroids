@@ -6,15 +6,18 @@ namespace AsteroidsEngine
     public class AsteroidSpawnerComponent : UpdateComponent
     {
         private readonly Random _rnd = new Random();
+        private readonly EntityCollection _parent;
+        public AsteroidSpawnerComponent(EntityCollection parent){
+            _parent = parent;
+        }
 
         public override void Update(Entity entity, float delta)
         {
             entity.Timer -= delta;
             if (entity.Timer > 0.0f) return;
             entity.Timer = 6f;
-            var collection = ServiceLocator.GetEntities();
-            var shipPos = collection.FindByTag(Tags.Player).Position;
-            var ufo = collection.FindByTag(Tags.Ufo);
+            var shipPos = _parent.FindByTag(Tags.Player).Position;
+            var ufo = _parent.FindByTag(Tags.Ufo);
             var spawnUfo = (ufo == null || !ufo.Active) && _rnd.Next(10) > 8;
 
             Vector2 newPos;
@@ -25,8 +28,8 @@ namespace AsteroidsEngine
             } while (Vector2.DistanceSquared(newPos, shipPos) < 0.25f);
 
             var enemy = spawnUfo
-                ? ServiceLocator.GetEntities().CreateUfo()
-                : ServiceLocator.GetEntities().CreateAsteroid();
+                ? _parent.CreateUfo()
+                : _parent.CreateAsteroid();
             enemy.Active = false;
             enemy.Position = newPos;
             enemy.Active = true;

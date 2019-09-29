@@ -6,17 +6,18 @@ namespace AsteroidsApp
     {
         private readonly Model _model;
         private readonly Texture _texture;
-
-        public PolyRenderComponent(int quadNum, Model model, Texture texture) : base(quadNum)
+        private readonly PolyEngine _engine;
+        public PolyRenderComponent(int quadNum, Model model, Texture texture, PolyEngine engine) : base(quadNum)
         {
             _texture = texture;
             _model = model;
+            _engine = engine;
         }
 
 
         public override void Render()
         {
-            if (((PolyEngine) ServiceLocator.GetEngine()).SpriteMode)
+            if (_engine.SpriteMode)
                 RenderSprite();
             else
                 RenderModel();

@@ -13,13 +13,12 @@ namespace AsteroidsApp
         protected override void SetupResources()
         {
             base.SetupResources();
-            ServiceLocator.SetEngine(this);
 
-            _model = new Model("poly");
+            _model = new Model(_shader,"poly");
             _model.GenIndices();
             _model.InitBuffers();
 
-            _texture = new Texture("atlas");
+            _texture = new Texture(_shader,"atlas");
             _texture.GenIndices();
             _texture.InitBuffers();
             _texture.Use();
@@ -27,7 +26,7 @@ namespace AsteroidsApp
             var numRenders = _texture.Length();
             for (var i = 0; i < numRenders; i++)
             {
-                var render = new PolyRenderComponent(i, _model, _texture);
+                var render = new PolyRenderComponent(i, _model, _texture, this);
                 Entities.AddRender(render);
             }
         }

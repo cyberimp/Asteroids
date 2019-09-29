@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using OpenTK.Graphics.OpenGL;
+using AsteroidsEngine;
 
 namespace AsteroidsApp
 {
@@ -11,7 +12,7 @@ namespace AsteroidsApp
         private int[] _begin;
         private int[] _lengths;
 
-        public Model(string path) : base(path)
+        public Model(Shader shader, string path) : base(shader, path)
         {
         }
 

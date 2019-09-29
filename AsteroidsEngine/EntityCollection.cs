@@ -13,29 +13,35 @@ namespace AsteroidsEngine
         private readonly Dictionary<string, UpdateComponent> _components;
         private readonly List<Entity> _newCollection;
         private readonly List<RenderComponent> _renders;
+        private readonly Shader _shader;
+        private readonly Engine _engine;
 
 
-        public EntityCollection()
+        public EntityCollection(Shader shader, Engine engine)
         {
             var tagsNumber = Enum.GetNames(typeof(Tags)).Length;
             _collection = new List<List<Entity>>(tagsNumber);
             for (int i = 0; i < tagsNumber;i++){
                 _collection.Add(new List<Entity>());
             }
+
             _newCollection = new List<Entity>();
             _components = new Dictionary<string, UpdateComponent>();
             _colliders = new Dictionary<string, ICollider>();
-            FillComponents();
-            FillColliders();
+            // FillComponents();
+            // FillColliders();
             _renders = new List<RenderComponent>();
+
+            _shader = shader;
+            _engine = engine;
         }
 
-        private void FillColliders()
+        public void FillColliders()
         {
             AddCollider("bullet", new BulletCollider());
-            AddCollider("asteroid", new AsteroidCollider());
-            AddCollider("ship", new ShipCollider());
-            AddCollider("ufo", new UfoCollider());
+            AddCollider("asteroid", new AsteroidCollider(_engine.Variables,this));
+            AddCollider("ship", new ShipCollider(_engine));
+            AddCollider("ufo", new UfoCollider(_engine.Variables));
         }
 
         public void AddRender(RenderComponent renderComponent)
@@ -43,16 +49,16 @@ namespace AsteroidsEngine
             _renders.Add(renderComponent);
         }
 
-        private void FillComponents()
+        public void FillComponents()
         {
             AddComponent("hyper", new HyperDriveComponent());
             AddComponent("decay", new DecayComponent());
-            AddComponent("player", new PlayerComponent());
-            AddComponent("spawner", new AsteroidSpawnerComponent());
-            AddComponent("ufo_ai", new UfoAiComponent());
-            AddComponent("laser_charge", new LaserChargeComponent());
-            AddComponent("score", new ScoreDigitComponent());
-            AddComponent("game_over", new GameOverComponent());
+            AddComponent("player", new PlayerComponent(_engine.Variables,_engine.CurController,this));
+            AddComponent("spawner", new AsteroidSpawnerComponent(this));
+            AddComponent("ufo_ai", new UfoAiComponent(this));
+            AddComponent("laser_charge", new LaserChargeComponent(_engine.Variables));
+            AddComponent("score", new ScoreDigitComponent(_engine.Variables,this));
+            AddComponent("game_over", new GameOverComponent(_engine.Variables));
         }
 
         private void AddComponent(string name, UpdateComponent component)
@@ -93,7 +99,7 @@ namespace AsteroidsEngine
             }
             else
             {
-                result = new Entity(Vector2.Zero) {Tag = tag};
+                result = new Entity(_shader) {Tag = tag};
                 _newCollection.Add(result);
             }
 

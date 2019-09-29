@@ -27,9 +27,11 @@ namespace AsteroidsApp
 
         protected int VertexBufferObject;
         private protected float[] Vertices;
+        protected readonly Shader _shader;
 
-        public Texture(string path)
+        public Texture(Shader shader, string path)
         {
+            _shader = shader;
             _names = new List<string>();
             Path = path;
             _handle = GL.GenTexture();
@@ -186,11 +188,11 @@ namespace AsteroidsApp
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
 
-            var vertexLocation = ServiceLocator.GetShader().GetAttribLocation("aPosition");
+            var vertexLocation = _shader.GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
             GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-            var texCoordLocation = ServiceLocator.GetShader().GetAttribLocation("aTexCoord");
+            var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float),
                 3 * sizeof(float));
