@@ -7,7 +7,7 @@
         public override void Update(Entity entity, float delta)
         {
             if (_target == null)
-                _target = ServiceLocator.GetEntities().FindByTag("player");
+                _target = ServiceLocator.GetEntities().FindByTag(Tags.Player);
             entity.Velocity = _target.Position - entity.Position;
             entity.Velocity.NormalizeFast();
             entity.Velocity *= 0.2f;

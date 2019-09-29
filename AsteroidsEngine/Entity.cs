@@ -25,7 +25,7 @@ namespace AsteroidsEngine
         }
         public bool Active { get; set; } = true;
         public float Timer { get; set; }
-        public string Tag { get; set; }
+        public Tags Tag { get; set; }
         public bool Visible { get; set; } = true;
         public int ComponentsCount => _updateComponents.Count;
         public Entity(Vector2 position)

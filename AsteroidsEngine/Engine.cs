@@ -86,12 +86,12 @@ namespace AsteroidsEngine
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             Entities.Update((float) e.Time);
-            Entities.Collide("bullet", "asteroid");
-            Entities.Collide("bullet", "ufo");
-            Entities.Collide("laser", "asteroid");
-            Entities.Collide("laser", "ufo");
-            Entities.Collide("ufo", "player");
-            Entities.Collide("asteroid", "player");
+            Entities.Collide(Tags.Bullet, Tags.Asteroid);
+            Entities.Collide(Tags.Bullet, Tags.Ufo);
+            Entities.Collide(Tags.Laser, Tags.Asteroid);
+            Entities.Collide(Tags.Laser, Tags.Ufo);
+            Entities.Collide(Tags.Ufo, Tags.Player);
+            Entities.Collide(Tags.Asteroid, Tags.Player);
             base.OnUpdateFrame(e);
         }
 
@@ -157,7 +157,7 @@ private void RestartGame()
         {
             Entities.CleanUp();
             Entities.CreatePlayer();
-            var spawner = Entities.FindByTag("spawner");
+            var spawner = Entities.FindByTag(Tags.Spawner);
             spawner.Timer = 0.0f;
             spawner.Active = true;
 
@@ -169,7 +169,7 @@ private void RestartGame()
 
         public void GameOver()
         {
-            Entities.FindByTag("spawner").Active = false;
+            Entities.FindByTag(Tags.Spawner).Active = false;
             ServiceLocator.GetVariables().GameOver = true;
             _waitRestart = true;
         }

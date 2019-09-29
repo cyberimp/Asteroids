@@ -13,8 +13,8 @@ namespace AsteroidsEngine
             if (entity.Timer > 0.0f) return;
             entity.Timer = 6f;
             var collection = ServiceLocator.GetEntities();
-            var shipPos = collection.FindByTag("player").Position;
-            var ufo = collection.FindByTag("ufo");
+            var shipPos = collection.FindByTag(Tags.Player).Position;
+            var ufo = collection.FindByTag(Tags.Ufo);
             var spawnUfo = (ufo == null || !ufo.Active) && _rnd.Next(10) > 8;
 
             Vector2 newPos;

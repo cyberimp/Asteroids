@@ -6,11 +6,11 @@
         {
             switch (entity2.Tag)
             {
-                case "laser":
+                case Tags.Laser:
                     entity1.Active = false;
                     ServiceLocator.GetVariables().Score += 1;
                     break;
-                case "bullet":
+                case Tags.Bullet:
                     ServiceLocator.GetVariables().Score += 1;
                     entity1.Scale /= 2.0f;
                     if (entity1.Scale < 0.025f)
