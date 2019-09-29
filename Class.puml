@@ -1,4 +1,4 @@
-﻿@startuml
+﻿@startuml Class Diagram
 
 
 
@@ -35,7 +35,7 @@ package AsteroidsEngine{
         +Vector2 Velocity
         +bool Active
         +float Timer
-        +string Tag
+        +Tags Tag
         +bool Visible
         +int ComponentsCount => _updateComponents.Count;
         +Entity(Vector2 position)
@@ -49,7 +49,7 @@ package AsteroidsEngine{
     }
     
     Class EntityCollection{
-        -LinkedList<Entity> _collection
+        -List<List<Entity> > _collection
         -Dictionary<string, ICollider> _colliders
         -Dictionary<string, UpdateComponent> _components
         -List<Entity> _newCollection
@@ -64,13 +64,13 @@ package AsteroidsEngine{
         -UpdateComponent GetComponent(string name)
         -void AddCollider(string name, ICollider collider)
         -ICollider GetCollider(string name)
-        -Entity ReuseOrCreate(string tag, int render)
-        -Entity ReuseOrCreate(string tag)
+        -Entity ReuseOrCreate(Tags tag, int render)
+        -Entity ReuseOrCreate(Tags tag)
         +void Update(float delta)
         +void Render()
-        +void Collide(string tag1, string tag2)
+        +void Collide(Tags tag1, Tags tag2)
         +void CleanUp()
-        +Entity FindByTag(string tag)
+        +Entity FindByTag(Tags tag)
         +RenderComponent GetRender(int num)
         ..
         +void CreatePlayer()

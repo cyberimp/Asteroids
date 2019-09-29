@@ -1,4 +1,4 @@
-﻿@startuml
+﻿@startuml Sequence Diagram
 Program -> PolyEngine: Main()
 activate PolyEngine
 group PolyEngine.OnLoad() 
