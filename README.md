@@ -18,3 +18,6 @@ Clone of famous Atari game
 **R:** change render
 
 **F:** restart mission after failure
+
+## P.S.:
+Whoah, lot of repo clones recently. Remember to keep LICENSE file when copying large portions of code, feel free to write an issue or PM me at https://vk.com/ovoshi or https://t.me/ovoshi

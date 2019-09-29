@@ -319,7 +319,7 @@ package AsteroidsApp{
     class Model{
         +int[] _begin
         +int[] _lengths
-        +Model(string path)
+        +Model(Shader shader, string path)
         +void GenIndices()
         +void RenderModel(int num)
     }
