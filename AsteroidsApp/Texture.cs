@@ -21,13 +21,13 @@ namespace AsteroidsApp
         private protected readonly string Path;
 
         private bool _disposedValue;
-        protected int ElementBufferObject;
+        private int _elementBufferObject;
         private protected uint[] Indices;
-        protected int VertexArrayObject;
+        private int _vertexArrayObject;
 
-        protected int VertexBufferObject;
+        private int _vertexBufferObject;
         private protected float[] Vertices;
-        protected readonly Shader _shader;
+        private readonly Shader _shader;
 
         public Texture(Shader shader, string path)
         {
@@ -41,8 +41,8 @@ namespace AsteroidsApp
             Use();
 
             using (var stream = a.GetManifestResourceStream(myName + "." + Path + ".png"))
-            using (var image = new Bitmap(stream))
             {
+                using var image = new Bitmap(stream);
                 var data = image.LockBits(
                     new Rectangle(0, 0, image.Width, image.Height),
                     ImageLockMode.ReadOnly,
@@ -84,109 +84,106 @@ namespace AsteroidsApp
             var vertices = new List<float>();
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
-            using (var stream = a.GetManifestResourceStream(myName + "." + Path + ".txt"))
-            using (var reader = new StreamReader(stream ??
-                                                 throw new FileNotFoundException("atlas not found")))
+            using var stream = a.GetManifestResourceStream(myName + "." + Path + ".txt");
+            using var reader = new StreamReader(stream ??
+                                                throw new FileNotFoundException("atlas not found"));
+            var line = 0;
+            var s = reader.ReadLine();
+            ++line;
+            if (s == null) throw new FileLoadException("cannot read atlas");
+            while (s != null && s[0] == '#')
             {
-                var line = 0;
-                var s = reader.ReadLine();
-                ++line;
-                if (s == null) throw new FileLoadException("cannot read atlas");
-                while (s != null && s[0] == '#')
-                {
-                    s = reader.ReadLine();
-                    ++line;
-                }
-
-                if (s == null) throw new FileLoadException("cannot read atlas, line:" + line);
-                if (!s.StartsWith("size:"))
-                    throw new FileLoadException("cannot read atlas, line:" + line);
-                var nums = s.Substring(5).Split('x');
-                if (nums.Length < 2)
-                    throw new FileLoadException("cannot read atlas, line:" + line);
-                var sizeX = 1.0f / int.Parse(nums[0]);
-                var sizeY = 1.0f / int.Parse(nums[1]);
                 s = reader.ReadLine();
                 ++line;
-                while (!string.IsNullOrEmpty(s))
+            }
+
+            if (s == null) throw new FileLoadException("cannot read atlas, line:" + line);
+            if (!s.StartsWith("size:"))
+                throw new FileLoadException("cannot read atlas, line:" + line);
+            var nums = s.Substring(5).Split('x');
+            if (nums.Length < 2)
+                throw new FileLoadException("cannot read atlas, line:" + line);
+            var sizeX = 1.0f / int.Parse(nums[0]);
+            var sizeY = 1.0f / int.Parse(nums[1]);
+            s = reader.ReadLine();
+            ++line;
+            while (!string.IsNullOrEmpty(s))
+            {
+                var split = s.Split(":");
+                var name = split[0];
+                var size = split[1].Trim();
+
+                var sizeType = size[0];
+                var width = 1;
+                var height = 1;
+
+                switch (sizeType)
                 {
-                    var split = s.Split(":");
-                    var name = split[0];
-                    var size = split[1].Trim();
-
-                    var sizeType = size[0];
-                    var width = 1;
-                    var height = 1;
-
-                    switch (sizeType)
-                    {
-                        case 's':
-                            break;
-                        case 'l':
-                            width = 4;
-                            break;
-                        case 'd':
-                            width = 2;
-                            height = 2;
-                            break;
-                        default:
-                            throw new FileLoadException("cannot read atlas, line:" + line);
-                    }
-
-                    split = size.Substring(1).Split(',');
-                    var xcoord = int.Parse(split[0]);
-                    var ycoord = int.Parse(split[1]);
-
-                    //Clockwise generation  of quad coordinates
-                    for (var f = MathHelper.PiOver4;
-                        f > -MathHelper.ThreePiOver2;
-                        f -= MathHelper.PiOver2)
-                    {
-                        vertices.Add(width * MathF.Sign(MathF.Cos(f)));
-                        vertices.Add(height * MathF.Sign(MathF.Sin(f)));
-                        vertices.Add(0.0f);
-                        vertices.Add(xcoord * sizeX + width * sizeX *
-                                     ((1.0f + MathF.Sign(MathF.Cos(f))) / 2));
-                        vertices.Add(ycoord * sizeY + height * sizeY *
-                                     ((1.0f - MathF.Sign(MathF.Sin(f))) / 2));
-                    }
-
-                    indices.AddRange(indicesStencil.Select(i => i + firstIndex));
-
-                    _names.Add(name);
-
-                    firstIndex += 4;
-
-                    s = reader.ReadLine();
-                    ++line;
+                    case 's':
+                        break;
+                    case 'l':
+                        width = 4;
+                        break;
+                    case 'd':
+                        width = 2;
+                        height = 2;
+                        break;
+                    default:
+                        throw new FileLoadException("cannot read atlas, line:" + line);
                 }
 
-                Vertices = vertices.ToArray();
-                Indices = indices.ToArray();
+                split = size.Substring(1).Split(',');
+                var xcoord = int.Parse(split[0]);
+                var ycoord = int.Parse(split[1]);
+
+                //Clockwise generation  of quad coordinates
+                for (var f = MathHelper.PiOver4;
+                    f > -MathHelper.ThreePiOver2;
+                    f -= MathHelper.PiOver2)
+                {
+                    vertices.Add(width * MathF.Sign(MathF.Cos(f)));
+                    vertices.Add(height * MathF.Sign(MathF.Sin(f)));
+                    vertices.Add(0.0f);
+                    vertices.Add(xcoord * sizeX + width * sizeX *
+                                 ((1.0f + MathF.Sign(MathF.Cos(f))) / 2));
+                    vertices.Add(ycoord * sizeY + height * sizeY *
+                                 ((1.0f - MathF.Sign(MathF.Sin(f))) / 2));
+                }
+
+                indices.AddRange(indicesStencil.Select(i => i + firstIndex));
+
+                _names.Add(name);
+
+                firstIndex += 4;
+
+                s = reader.ReadLine();
+                ++line;
             }
+
+            Vertices = vertices.ToArray();
+            Indices = indices.ToArray();
         }
 
         public void InitBuffers()
         {
-            VertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
+            _vertexBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices,
                 BufferUsageHint.StaticDraw);
 
-            ElementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            _elementBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
             GL.BufferData(BufferTarget.ElementArrayBuffer, Indices.Length * sizeof(uint), Indices,
                 BufferUsageHint.StaticDraw);
 
-            VertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(VertexArrayObject);
-
+            _vertexArrayObject = GL.GenVertexArray();
+            GL.BindVertexArray(_vertexArrayObject);
         }
 
         public void Use(TextureUnit unit = TextureUnit.Texture0)
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
 
             var vertexLocation = _shader.GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
@@ -201,27 +198,22 @@ namespace AsteroidsApp
             GL.BindTexture(TextureTarget.Texture2D, _handle);
         }
 
-        public void RenderQuad(string name)
-        {
-            RenderQuad(_names.FindIndex(s => s == name));
-        }
-
         public void RenderQuad(int num)
         {
             GL.DrawElements(PrimitiveType.Triangles, 6,
                 DrawElementsType.UnsignedInt, num * 6 * sizeof(float));
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_disposedValue) return;
 
-            GL.DeleteBuffer(VertexArrayObject);
-            GL.DeleteBuffer(VertexBufferObject);
-            GL.DeleteBuffer(ElementBufferObject);
+            GL.DeleteBuffer(_vertexArrayObject);
+            GL.DeleteBuffer(_vertexBufferObject);
+            GL.DeleteBuffer(_elementBufferObject);
             GL.DeleteTexture(_handle);
 
-            _disposedValue = true;
+            _disposedValue = disposing;
         }
 
         public void Dispose()
@@ -232,11 +224,10 @@ namespace AsteroidsApp
 
         ~Texture()
         {
-            GL.DeleteBuffer(VertexArrayObject);
-            GL.DeleteBuffer(VertexBufferObject);
-            GL.DeleteBuffer(ElementBufferObject);
+            GL.DeleteBuffer(_vertexArrayObject);
+            GL.DeleteBuffer(_vertexBufferObject);
+            GL.DeleteBuffer(_elementBufferObject);
             GL.DeleteTexture(_handle);
         }
-
     }
 }

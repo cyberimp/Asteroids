@@ -2,11 +2,13 @@
 {
     public class UfoCollider : ICollider
     {
-        private GuiVariables _variables;
+        private readonly GuiVariables _variables;
+
         public UfoCollider(GuiVariables variables)
         {
             _variables = variables;
         }
+
         public void OnCollide(Entity entity1, Entity entity2)
         {
             if (entity2.Tag != Tags.Bullet && entity2.Tag != Tags.Laser) return;

@@ -11,13 +11,14 @@ namespace AsteroidsEngine
         private readonly Controller _controller;
         private readonly EntityCollection _parent;
 
-        public PlayerComponent(GuiVariables variables, Controller controller, 
-        EntityCollection parent)
+        public PlayerComponent(GuiVariables variables, Controller controller,
+            EntityCollection parent)
         {
             _variables = variables;
             _controller = controller;
             _parent = parent;
         }
+
         public override void Update(Entity entity, float delta)
         {
             if (_bulletCd > 0.0f)

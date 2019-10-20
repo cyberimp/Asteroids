@@ -23,9 +23,9 @@ namespace AsteroidsApp
             var a = Assembly.GetExecutingAssembly();
             var myName = a.GetName().Name;
             using (var stream = a.GetManifestResourceStream(myName + "." + Path + ".points"))
-            using (var reader = new StreamReader(stream ??
-                                                 throw new FileNotFoundException(".points not found")))
             {
+                using var reader = new StreamReader(stream ??
+                                                    throw new FileNotFoundException(".points not found"));
                 var line = reader.ReadLine();
                 while (!string.IsNullOrEmpty(line))
                 {
@@ -43,9 +43,9 @@ namespace AsteroidsApp
 
 
             using (var stream = a.GetManifestResourceStream(myName + "." + Path + ".lines"))
-            using (var reader = new StreamReader(stream ??
-                                                 throw new FileNotFoundException(".lines not found")))
             {
+                using var reader = new StreamReader(stream ??
+                                                    throw new FileNotFoundException(".lines not found"));
                 var begin = new List<int>();
                 var lengths = new List<int>();
                 var start = 0;

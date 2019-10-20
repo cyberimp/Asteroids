@@ -7,6 +7,7 @@ namespace AsteroidsApp
         private readonly Model _model;
         private readonly Texture _texture;
         private readonly PolyEngine _engine;
+
         public PolyRenderComponent(int quadNum, Model model, Texture texture, PolyEngine engine) : base(quadNum)
         {
             _texture = texture;

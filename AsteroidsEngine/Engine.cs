@@ -14,14 +14,16 @@ namespace AsteroidsEngine
         public const int MaxLaserCharges = 3;
         private readonly Color4 _backColor;
 
-        protected Shader _shader;
+        protected Shader Shader;
         protected EntityCollection Entities;
-        public GuiVariables Variables {get;}
-        public Controller CurController{get;}
+        public GuiVariables Variables { get; }
+        public Controller CurController { get; }
 
         private bool _waitRestart;
+
         protected Engine(int xRes = DefaultXRes, int yRes = DefaultYRes) :
-            base(xRes, yRes, GraphicsMode.Default, AppName, GameWindowFlags.FixedWindow)
+            base(xRes, yRes, GraphicsMode.Default, AppName, 
+                GameWindowFlags.FixedWindow)
         {
             _backColor = new Color4(13, 8, 13, 255); //Eroge Copper Black
             Variables = new GuiVariables();
@@ -48,17 +50,17 @@ namespace AsteroidsEngine
 
         protected virtual void SetupResources()
         {
-            _shader = new Shader("shader1.vert", "shader1.frag");
-            _shader.Use();
+            Shader = new Shader("shader1.vert", "shader1.frag");
+            Shader.Use();
 
-            Entities = new EntityCollection(_shader, this);
+            Entities = new EntityCollection(Shader, this);
             Entities.FillColliders();
             Entities.FillComponents();
         }
 
         protected override void OnUnload(EventArgs e)
         {
-            _shader.Dispose();
+            Shader.Dispose();
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             base.OnUnload(e);
@@ -76,7 +78,7 @@ namespace AsteroidsEngine
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            _shader.Use();
+            Shader.Use();
 
             Entities.Render();
 
@@ -127,7 +129,7 @@ namespace AsteroidsEngine
             base.OnKeyDown(e);
         }
 
-        
+
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             switch (e.Key)
@@ -152,7 +154,7 @@ namespace AsteroidsEngine
             base.OnKeyDown(e);
         }
 
-private void RestartGame()
+        private void RestartGame()
         {
             Entities.CleanUp();
             Entities.CreatePlayer();

@@ -3,11 +3,13 @@
     public class UfoAiComponent : UpdateComponent
     {
         private Entity _target;
-        private EntityCollection _parent;
+        private readonly EntityCollection _parent;
+
         public UfoAiComponent(EntityCollection parent)
         {
             _parent = parent;
         }
+
         public override void Update(Entity entity, float delta)
         {
             if (_target == null)

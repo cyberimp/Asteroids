@@ -7,7 +7,9 @@ namespace AsteroidsEngine
     {
         private readonly Random _rnd = new Random();
         private readonly EntityCollection _parent;
-        public AsteroidSpawnerComponent(EntityCollection parent){
+
+        public AsteroidSpawnerComponent(EntityCollection parent)
+        {
             _parent = parent;
         }
 

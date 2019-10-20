@@ -7,8 +7,7 @@ namespace AsteroidsEngine
 {
     public class EntityCollection
     {
- 
-        private readonly List<List<Entity> > _collection;
+        private readonly List<List<Entity>> _collection;
         private readonly Dictionary<string, ICollider> _colliders;
         private readonly Dictionary<string, UpdateComponent> _components;
         private readonly List<Entity> _newCollection;
@@ -21,7 +20,8 @@ namespace AsteroidsEngine
         {
             var tagsNumber = Enum.GetNames(typeof(Tags)).Length;
             _collection = new List<List<Entity>>(tagsNumber);
-            for (int i = 0; i < tagsNumber;i++){
+            for (int i = 0; i < tagsNumber; i++)
+            {
                 _collection.Add(new List<Entity>());
             }
 
@@ -39,7 +39,7 @@ namespace AsteroidsEngine
         public void FillColliders()
         {
             AddCollider("bullet", new BulletCollider());
-            AddCollider("asteroid", new AsteroidCollider(_engine.Variables,this));
+            AddCollider("asteroid", new AsteroidCollider(_engine.Variables, this));
             AddCollider("ship", new ShipCollider(_engine));
             AddCollider("ufo", new UfoCollider(_engine.Variables));
         }
@@ -53,11 +53,11 @@ namespace AsteroidsEngine
         {
             AddComponent("hyper", new HyperDriveComponent());
             AddComponent("decay", new DecayComponent());
-            AddComponent("player", new PlayerComponent(_engine.Variables,_engine.CurController,this));
+            AddComponent("player", new PlayerComponent(_engine.Variables, _engine.CurController, this));
             AddComponent("spawner", new AsteroidSpawnerComponent(this));
             AddComponent("ufo_ai", new UfoAiComponent(this));
             AddComponent("laser_charge", new LaserChargeComponent(_engine.Variables));
-            AddComponent("score", new ScoreDigitComponent(_engine.Variables,this));
+            AddComponent("score", new ScoreDigitComponent(_engine.Variables, this));
             AddComponent("game_over", new GameOverComponent(_engine.Variables));
         }
 
@@ -92,7 +92,7 @@ namespace AsteroidsEngine
 
         private Entity ReuseOrCreate(Tags tag)
         {
-            var result = _collection[(int)tag].FirstOrDefault(entity => !entity.Active);
+            var result = _collection[(int) tag].FirstOrDefault(entity => !entity.Active);
             if (result != null)
             {
                 result.Active = true;
@@ -110,31 +110,30 @@ namespace AsteroidsEngine
         {
             if (_newCollection.Count > 0)
             {
-                foreach (var entity in _newCollection) 
-                    _collection[(int)entity.Tag].Add(entity);
+                foreach (var entity in _newCollection)
+                    _collection[(int) entity.Tag].Add(entity);
                 _newCollection.Clear();
             }
 
             foreach (var tag in _collection)
-                foreach (var entity in tag)
-                    entity.Update(delta);
-                    
+            foreach (var entity in tag)
+                entity.Update(delta);
         }
 
         public void Render()
         {
             foreach (var tag in _collection)
-                foreach (var entity in tag)
-                    entity.Render();
+            foreach (var entity in tag)
+                entity.Render();
         }
 
         public void Collide(Tags tag1, Tags tag2)
         {
-            foreach (var entity1 in _collection[(int)tag1].Where(entity => entity.Active))
+            foreach (var entity1 in _collection[(int) tag1].Where(entity => entity.Active))
             {
                 var cachePos = entity1.Position;
                 var cacheSize = entity1.Scale * 2;
-                foreach (var entity2 in _collection[(int)tag2].Where(entity =>  entity.Active))
+                foreach (var entity2 in _collection[(int) tag2].Where(entity => entity.Active))
                     if (Vector2.DistanceSquared(cachePos, entity2.Position) <
                         (cacheSize + entity2.Scale * 2) * (cacheSize + entity2.Scale * 2))
                     {
@@ -147,16 +146,19 @@ namespace AsteroidsEngine
 
         public void CleanUp()
         {
-            Tags[] trash = {Tags.Asteroid, Tags.Bullet,
-                Tags.Laser, Tags.Ufo};
+            Tags[] trash =
+            {
+                Tags.Asteroid, Tags.Bullet,
+                Tags.Laser, Tags.Ufo
+            };
             foreach (var tag in trash)
-                foreach (var entity in _collection[(int)tag])
-                    entity.Active = false;
+            foreach (var entity in _collection[(int) tag])
+                entity.Active = false;
         }
 
         public Entity FindByTag(Tags tag)
         {
-            return _collection[(int)tag].FirstOrDefault();
+            return _collection[(int) tag].FirstOrDefault();
         }
 
         public RenderComponent GetRender(int num)
@@ -210,7 +212,7 @@ namespace AsteroidsEngine
 
         public void CreateBanner()
         {
-            var banner = ReuseOrCreate(Tags.UI, 13);
+            var banner = ReuseOrCreate(Tags.Ui, 13);
             banner.AddComponent(GetComponent("game_over"));
             banner.Active = true;
             banner.Scale = 0.25f;
@@ -257,7 +259,7 @@ namespace AsteroidsEngine
         {
             for (var i = 0.0f; i < 3.0f; i++)
             {
-                var laser = ReuseOrCreate(Tags.UI, 10);
+                var laser = ReuseOrCreate(Tags.Ui, 10);
                 laser.Scale = 0.025f;
                 laser.Position = new Vector2(-1f + 0.025f + 0.05f * i, 1f - 0.075f);
                 laser.AddComponent(GetComponent("laser_charge"));
@@ -267,25 +269,25 @@ namespace AsteroidsEngine
 
         public void CreateScoreUi()
         {
-            var score = ReuseOrCreate(Tags.UI, 12);
+            var score = ReuseOrCreate(Tags.Ui, 12);
             score.Scale = 0.030f;
             score.Position = new Vector2(-1.0f + 0.1f, 1f - 0.025f);
             for (var i = 0.0f; i < 10.0f; i++)
             {
-                var digit = ReuseOrCreate(Tags.UI, 0);
+                var digit = ReuseOrCreate(Tags.Ui, 0);
                 digit.Scale = 0.030f;
                 digit.Position = new Vector2(-1.0f + 0.250f + 0.052f * i, 1f - 0.025f);
                 digit.Timer = i;
                 digit.AddComponent(GetComponent("score"));
             }
 
-            var bigScore = ReuseOrCreate(Tags.UI, 12);
+            var bigScore = ReuseOrCreate(Tags.Ui, 12);
             bigScore.Scale = 0.060f;
             bigScore.Position = new Vector2(-1.0f + 0.2f, -0.35f);
             bigScore.AddComponent(GetComponent("game_over"));
             for (var i = 0.0f; i < 10.0f; i++)
             {
-                var bigDigit = ReuseOrCreate(Tags.UI, 0);
+                var bigDigit = ReuseOrCreate(Tags.Ui, 0);
                 bigDigit.Scale = 0.060f;
                 bigDigit.Position = new Vector2(-1.0f + 0.5f + 0.1f * i, -0.35f);
                 bigDigit.Timer = i;

@@ -7,7 +7,7 @@ namespace AsteroidsEngine
         Ufo = 2,
         Laser = 3,
         Player = 4,
-        UI = 5,
+        Ui = 5,
         Spawner    
     }
 }

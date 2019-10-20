@@ -14,11 +14,11 @@ namespace AsteroidsApp
         {
             base.SetupResources();
 
-            _model = new Model(_shader,"poly");
+            _model = new Model(Shader, "poly");
             _model.GenIndices();
             _model.InitBuffers();
 
-            _texture = new Texture(_shader,"atlas");
+            _texture = new Texture(Shader, "atlas");
             _texture.GenIndices();
             _texture.InitBuffers();
             _texture.Use();

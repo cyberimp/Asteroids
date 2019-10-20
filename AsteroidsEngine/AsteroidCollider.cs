@@ -2,12 +2,15 @@
 {
     public class AsteroidCollider : ICollider
     {
-        private GuiVariables _variables;
-        private EntityCollection _parent;
-        public AsteroidCollider(GuiVariables variables, EntityCollection parent){
+        private readonly GuiVariables _variables;
+        private readonly EntityCollection _parent;
+
+        public AsteroidCollider(GuiVariables variables, EntityCollection parent)
+        {
             _variables = variables;
             _parent = parent;
         }
+
         public void OnCollide(Entity entity1, Entity entity2)
         {
             switch (entity2.Tag)

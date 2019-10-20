@@ -4,11 +4,13 @@
     {
         private readonly GuiVariables _variables;
         private readonly EntityCollection _parent;
+
         public ScoreDigitComponent(GuiVariables variables, EntityCollection parent)
         {
             _variables = variables;
             _parent = parent;
         }
+
         public override void Update(Entity entity, float delta)
         {
             var score = _variables.Score;

@@ -22,16 +22,16 @@ namespace AsteroidsEngine
             string vertexShaderSource;
 
             using (var resource = a.GetManifestResourceStream(myName + "." + vertexPath))
-            using (var reader = new StreamReader(resource ?? throw new Exception()))
             {
+                using var reader = new StreamReader(resource ?? throw new Exception());
                 vertexShaderSource = reader.ReadToEnd();
             }
 
             string fragmentShaderSource;
 
             using (var resource = a.GetManifestResourceStream(myName + "." + fragmentPath))
-            using (var reader = new StreamReader(resource ?? throw new Exception()))
             {
+                using var reader = new StreamReader(resource ?? throw new Exception());
                 fragmentShaderSource = reader.ReadToEnd();
             }
 
@@ -100,13 +100,13 @@ namespace AsteroidsEngine
 
         private bool _disposedValue;
 
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_disposedValue) return;
 
             GL.DeleteProgram(_handle);
 
-            _disposedValue = true;
+            _disposedValue = disposing;
         }
 
         ~Shader()

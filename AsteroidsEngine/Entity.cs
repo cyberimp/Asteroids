@@ -13,16 +13,39 @@ namespace AsteroidsEngine
         private float _scale;
         private float _rotation;
         private readonly Shader _shader;
-        public Vector2 Position { get => _position;
-            set { _position = value; UpdateMatrix(); }
+
+        public Vector2 Position
+        {
+            get => _position;
+            set
+            {
+                _position = value;
+                UpdateMatrix();
+            }
         }
+
         public Vector2 Velocity { get; set; } = Vector2.Zero;
-        public float Scale { get => _scale;
-            set { _scale = value; UpdateMatrix(); }
+
+        public float Scale
+        {
+            get => _scale;
+            set
+            {
+                _scale = value;
+                UpdateMatrix();
+            }
         }
-        public float Rotation { get => _rotation;
-            set { _rotation = value; UpdateMatrix(); }
+
+        public float Rotation
+        {
+            get => _rotation;
+            set
+            {
+                _rotation = value;
+                UpdateMatrix();
+            }
         }
+
         public bool Active { get; set; } = true;
         public float Timer { get; set; }
         public Tags Tag { get; set; }
