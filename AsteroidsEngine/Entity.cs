@@ -5,14 +5,16 @@ namespace AsteroidsEngine
 {
     public sealed class Entity
     {
+        private readonly Shader _shader;
         private readonly LinkedList<UpdateComponent> _updateComponents;
         private ICollider _collider;
         private RenderComponent _render;
+        
         private Matrix4 _transMatrix;
-        private Vector2 _position;
-        private float _scale;
+        private Vector2 _position = Vector2.Zero;
+        private float _scale = 0.5f;
         private float _rotation;
-        private readonly Shader _shader;
+        private bool _dirtyTrans = true;
 
         public Vector2 Position
         {
@@ -20,11 +22,10 @@ namespace AsteroidsEngine
             set
             {
                 _position = value;
-                UpdateMatrix();
+                _dirtyTrans = true;
             }
         }
 
-        public Vector2 Velocity { get; set; } = Vector2.Zero;
 
         public float Scale
         {
@@ -32,7 +33,7 @@ namespace AsteroidsEngine
             set
             {
                 _scale = value;
-                UpdateMatrix();
+                _dirtyTrans = true;
             }
         }
 
@@ -42,10 +43,11 @@ namespace AsteroidsEngine
             set
             {
                 _rotation = value;
-                UpdateMatrix();
+                _dirtyTrans = true;
             }
         }
 
+        public Vector2 Velocity { get; set; } = Vector2.Zero;
         public bool Active { get; set; } = true;
         public float Timer { get; set; }
         public Tags Tag { get; set; }
@@ -55,8 +57,6 @@ namespace AsteroidsEngine
         public Entity(Shader shader)
         {
             _updateComponents = new LinkedList<UpdateComponent>();
-            Position = Vector2.Zero;
-            Scale = 0.5f;
             _shader = shader;
         }
 
@@ -77,6 +77,12 @@ namespace AsteroidsEngine
         public void Render()
         {
             if (!Active || !Visible || _render == null) return;
+            if (_dirtyTrans)
+            {
+                UpdateMatrix();
+                _dirtyTrans = false;
+            }
+            
             _shader.SetMatrix4("transform", _transMatrix);
             _render.Render();
         }
