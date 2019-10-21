@@ -26,12 +26,13 @@ package AsteroidsEngine{
      class Entity{
         -LinkedList<UpdateComponent> _updateComponents
         -ICollider _collider
+        -Shader _shader
         -RenderComponent _render
         -Matrix4 _transMatrix
+        -bool _dirtyTrans
         -Vector2 _position
         -float _scale
         -float _rotation
-        -Shader _shader
         +Vector2 Position
         +float Scale
         +float Rotation

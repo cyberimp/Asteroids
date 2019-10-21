@@ -9,7 +9,9 @@ namespace AsteroidsEngine
         private readonly LinkedList<UpdateComponent> _updateComponents;
         private ICollider _collider;
         private RenderComponent _render;
-        
+
+        #region transform matrix fields
+
         private Matrix4 _transMatrix;
         private Vector2 _position = Vector2.Zero;
         private float _scale = 0.5f;
@@ -25,7 +27,6 @@ namespace AsteroidsEngine
                 _dirtyTrans = true;
             }
         }
-
 
         public float Scale
         {
@@ -46,6 +47,8 @@ namespace AsteroidsEngine
                 _dirtyTrans = true;
             }
         }
+
+        #endregion
 
         public Vector2 Velocity { get; set; } = Vector2.Zero;
         public bool Active { get; set; } = true;
@@ -82,7 +85,7 @@ namespace AsteroidsEngine
                 UpdateMatrix();
                 _dirtyTrans = false;
             }
-            
+
             _shader.SetMatrix4("transform", _transMatrix);
             _render.Render();
         }
