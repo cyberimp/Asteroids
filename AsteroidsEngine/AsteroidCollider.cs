@@ -11,12 +11,13 @@
             _parent = parent;
         }
 
-        public void OnCollide(Entity entity1, Entity entity2)
+        public bool OnCollide(Entity entity1, Entity entity2)
         {
+            var alive = true;
             switch (entity2.Tag)
             {
                 case Tags.Laser:
-                    entity1.Active = false;
+                    alive = false;
                     _variables.Score += 1;
                     break;
                 case Tags.Bullet:
@@ -24,7 +25,7 @@
                     entity1.Scale /= 2.0f;
                     if (entity1.Scale < 0.025f)
                     {
-                        entity1.Active = false;
+                        alive = false;
                     }
                     else
                     {
@@ -39,6 +40,8 @@
 
                     break;
             }
+
+            return alive;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace AsteroidsEngine
             _parent = parent;
         }
 
-        public override void Update(Entity entity, float delta)
+        public override bool Update(Entity entity, float delta)
         {
             if (_bulletCd > 0.0f)
                 _bulletCd -= delta;
@@ -60,6 +60,7 @@ namespace AsteroidsEngine
 
             if (entity.Velocity.LengthSquared > 0.25f)
                 entity.Velocity = Vector2.Normalize(entity.Velocity) * 0.5f;
+            return true;
         }
     }
 }

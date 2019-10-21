@@ -12,13 +12,14 @@
             _parent = parent;
         }
 
-        public override void Update(Entity entity, float delta)
+        public override bool Update(Entity entity, float delta)
         {
             if (_target == null)
                 _target = _parent.FindByTag(Tags.Player);
             entity.Velocity = _target.Position - entity.Position;
             entity.Velocity.NormalizeFast();
             entity.Velocity *= UfoVelocity;
+            return true;
         }
     }
 }

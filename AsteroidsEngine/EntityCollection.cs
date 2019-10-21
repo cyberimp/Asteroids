@@ -7,10 +7,9 @@ namespace AsteroidsEngine
 {
     public class EntityCollection
     {
-        private readonly List<List<Entity>> _collection;
+        private readonly List<ActiveList> _collection;
         private readonly Dictionary<string, ICollider> _colliders;
         private readonly Dictionary<string, UpdateComponent> _components;
-        private readonly List<Entity> _newCollection;
         private readonly List<RenderComponent> _renders;
         private readonly Shader _shader;
         private readonly Engine _engine;
@@ -19,17 +18,14 @@ namespace AsteroidsEngine
         public EntityCollection(Shader shader, Engine engine)
         {
             var tagsNumber = Enum.GetNames(typeof(Tags)).Length;
-            _collection = new List<List<Entity>>(tagsNumber);
-            for (int i = 0; i < tagsNumber; i++)
+            _collection = new List<ActiveList>(tagsNumber);
+            for (var i = 0; i < tagsNumber; i++)
             {
-                _collection.Add(new List<Entity>());
+                _collection.Add(new ActiveList());
             }
 
-            _newCollection = new List<Entity>();
             _components = new Dictionary<string, UpdateComponent>();
             _colliders = new Dictionary<string, ICollider>();
-            // FillComponents();
-            // FillColliders();
             _renders = new List<RenderComponent>();
 
             _shader = shader;
@@ -92,32 +88,20 @@ namespace AsteroidsEngine
 
         private Entity ReuseOrCreate(Tags tag)
         {
-            var result = _collection[(int) tag].FirstOrDefault(entity => !entity.Active);
-            if (result != null)
-            {
-                result.Active = true;
-            }
-            else
-            {
-                result = new Entity(_shader) {Tag = tag};
-                _newCollection.Add(result);
-            }
+            var result = _collection[(int) tag].GetLast();
+            if (result != null) return result;
 
+            result = new Entity(_shader) {Tag = tag};
+            _collection[(int) tag].Add(result);
             return result;
         }
 
         public void Update(float delta)
         {
-            if (_newCollection.Count > 0)
-            {
-                foreach (var entity in _newCollection)
-                    _collection[(int) entity.Tag].Add(entity);
-                _newCollection.Clear();
-            }
-
             foreach (var tag in _collection)
             foreach (var entity in tag)
-                entity.Update(delta);
+                if (!entity.Update(delta))
+                    tag.DeactivateCurrent();
         }
 
         public void Render()
@@ -129,16 +113,18 @@ namespace AsteroidsEngine
 
         public void Collide(Tags tag1, Tags tag2)
         {
-            foreach (var entity1 in _collection[(int) tag1].Where(entity => entity.Active))
+            foreach (var entity1 in _collection[(int) tag1])
             {
                 var cachePos = entity1.Position;
                 var cacheSize = entity1.Scale * 2;
-                foreach (var entity2 in _collection[(int) tag2].Where(entity => entity.Active))
+                foreach (var entity2 in _collection[(int) tag2])
                     if (Vector2.DistanceSquared(cachePos, entity2.Position) <
                         (cacheSize + entity2.Scale * 2) * (cacheSize + entity2.Scale * 2))
                     {
-                        entity1.Collide(entity2);
-                        entity2.Collide(entity1);
+                        if (!entity1.Collide(entity2))
+                            _collection[(int) tag1].DeactivateCurrent();    
+                        if (!entity2.Collide(entity1))
+                            _collection[(int) tag2].DeactivateCurrent();
                     }
             }
         }
@@ -152,8 +138,7 @@ namespace AsteroidsEngine
                 Tags.Laser, Tags.Ufo
             };
             foreach (var tag in trash)
-            foreach (var entity in _collection[(int) tag])
-                entity.Active = false;
+                _collection[(int) tag].DeactivateAll();
         }
 
         public Entity FindByTag(Tags tag)

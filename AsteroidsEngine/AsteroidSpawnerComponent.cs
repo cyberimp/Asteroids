@@ -13,10 +13,10 @@ namespace AsteroidsEngine
             _parent = parent;
         }
 
-        public override void Update(Entity entity, float delta)
+        public override bool Update(Entity entity, float delta)
         {
             entity.Timer -= delta;
-            if (entity.Timer > 0.0f) return;
+            if (entity.Timer > 0.0f) return true;
             entity.Timer = 6f;
             var shipPos = _parent.FindByTag(Tags.Player).Position;
             var ufo = _parent.FindByTag(Tags.Ufo);
@@ -32,16 +32,16 @@ namespace AsteroidsEngine
             var enemy = spawnUfo
                 ? _parent.CreateUfo()
                 : _parent.CreateAsteroid();
-            enemy.Active = false;
             enemy.Position = newPos;
             enemy.Active = true;
-            if (spawnUfo) return;
+            if (spawnUfo) return true;
 
 
             enemy.Rotation = (float) (_rnd.NextDouble() * 90f);
             enemy.Velocity = Vector2.Transform(enemy.Velocity,
                 Quaternion.FromAxisAngle(Vector3.UnitZ,
                     (float) (_rnd.NextDouble() * MathHelper.TwoPi)));
+            return true;
         }
     }
 }

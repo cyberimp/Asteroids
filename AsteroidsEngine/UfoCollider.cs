@@ -9,11 +9,11 @@
             _variables = variables;
         }
 
-        public void OnCollide(Entity entity1, Entity entity2)
+        public bool OnCollide(Entity entity1, Entity entity2)
         {
-            if (entity2.Tag != Tags.Bullet && entity2.Tag != Tags.Laser) return;
-            entity1.Active = false;
+            if (entity2.Tag != Tags.Bullet && entity2.Tag != Tags.Laser) return true;
             _variables.Score += 5;
+            return false;
         }
     }
 }

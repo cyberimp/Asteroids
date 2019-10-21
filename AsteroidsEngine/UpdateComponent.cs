@@ -2,6 +2,6 @@
 {
     public abstract class UpdateComponent
     {
-        public abstract void Update(Entity entity, float delta);
+        public abstract bool Update(Entity entity, float delta);
     }
 }

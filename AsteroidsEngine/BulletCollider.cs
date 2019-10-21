@@ -2,9 +2,9 @@
 {
     public class BulletCollider : ICollider
     {
-        public void OnCollide(Entity entity1, Entity entity2)
+        public bool OnCollide(Entity entity1, Entity entity2)
         {
-            entity1.Active = false;
+            return false;
         }
     }
 }

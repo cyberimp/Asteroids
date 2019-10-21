@@ -11,13 +11,14 @@
             _parent = parent;
         }
 
-        public override void Update(Entity entity, float delta)
+        public override bool Update(Entity entity, float delta)
         {
             var score = _variables.Score;
             for (var i = 9; i > entity.Timer; i--)
                 score /= 10;
             var digit = score % 10;
             entity.SetRender(_parent.GetRender(digit));
+            return true;
         }
     }
 }

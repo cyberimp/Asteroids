@@ -70,11 +70,15 @@ namespace AsteroidsEngine
                            Matrix4.CreateTranslation(Position.X, Position.Y, 0.0f);
         }
 
-        public void Update(float delta)
+        public bool Update(float delta)
         {
-            if (!Active) return;
+            if (!Active) return true;
             Position += Velocity * delta;
-            foreach (var component in _updateComponents) component.Update(this, delta);
+            var alive = true;
+            foreach (var component in _updateComponents)
+                if (!component.Update(this, delta))
+                    alive = false;
+            return alive;
         }
 
         public void Render()
@@ -105,9 +109,9 @@ namespace AsteroidsEngine
             _collider = collider;
         }
 
-        public void Collide(Entity entity2)
+        public bool Collide(Entity entity2)
         {
-            _collider?.OnCollide(this, entity2);
+            return _collider == null || _collider.OnCollide(this, entity2);
         }
     }
 }

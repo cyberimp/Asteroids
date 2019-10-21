@@ -9,9 +9,10 @@
             _variables = variables;
         }
 
-        public override void Update(Entity entity, float delta)
+        public override bool Update(Entity entity, float delta)
         {
             entity.Visible = _variables.LaserCharges > entity.Timer;
+            return true;
         }
     }
 }
