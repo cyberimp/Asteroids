@@ -19,9 +19,13 @@ namespace AsteroidsApp
         public override void Render()
         {
             if (_engine.SpriteMode)
+            {
                 RenderSprite();
+            }
             else
+            {
                 RenderModel();
+            }
         }
 
         private void RenderSprite()

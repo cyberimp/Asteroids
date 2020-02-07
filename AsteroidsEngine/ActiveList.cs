@@ -59,7 +59,9 @@ namespace AsteroidsEngine
             _collection.Add(entity);
             ++_lastActive;
             if (_lastActive < _collection.Count - 1)
+            {
                 SwapWithLastActive(_collection.Count - 1);
+            }
         }
 
         private void DeactivateInternal(int index)

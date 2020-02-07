@@ -22,12 +22,19 @@ namespace AsteroidsEngine
         public override bool Update(Entity entity, float delta)
         {
             if (_bulletCd > 0.0f)
+            {
                 _bulletCd -= delta;
+            }
+
             if (_laserCd > 0.0f)
+            {
                 _laserCd -= delta;
+            }
 
             if (entity.Timer > 0.0f && _variables.LaserCharges < Engine.MaxLaserCharges)
+            {
                 entity.Timer -= delta;
+            }
 
             if (entity.Timer <= 0.0f && _variables.LaserCharges < Engine.MaxLaserCharges)
             {
@@ -37,9 +44,11 @@ namespace AsteroidsEngine
 
             entity.Rotation -= _controller.Rotation * 270f * delta;
             if (_controller.Thrust)
+            {
                 entity.Velocity += Vector2.Transform(Vector2.UnitY * .01f,
                     Quaternion.FromEulerAngles(Vector3.UnitZ *
                                                MathHelper.DegreesToRadians(entity.Rotation)));
+            }
 
             if (_controller.Fire1 && _bulletCd < 0.001f)
             {
@@ -59,7 +68,10 @@ namespace AsteroidsEngine
             }
 
             if (entity.Velocity.LengthSquared > 0.25f)
+            {
                 entity.Velocity = Vector2.Normalize(entity.Velocity) * 0.5f;
+            }
+
             return true;
         }
     }

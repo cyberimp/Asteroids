@@ -99,10 +99,16 @@ namespace AsteroidsApp
 
             if (s == null) throw new FileLoadException("cannot read atlas, line:" + line);
             if (!s.StartsWith("size:"))
+            {
                 throw new FileLoadException("cannot read atlas, line:" + line);
+            }
+
             var nums = s.Substring(5).Split('x');
             if (nums.Length < 2)
+            {
                 throw new FileLoadException("cannot read atlas, line:" + line);
+            }
+
             var sizeX = 1.0f / int.Parse(nums[0]);
             var sizeY = 1.0f / int.Parse(nums[1]);
             s = reader.ReadLine();
