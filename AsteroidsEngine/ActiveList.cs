@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace AsteroidsEngine
@@ -7,73 +6,16 @@ namespace AsteroidsEngine
     public class ActiveList : IEnumerable<Entity>
     {
         #region IEnumerator
-        
-        private class ActiveEnumerator : IEnumerator<Entity>
-        {
-            private readonly List<Entity> _collection;
-            private readonly int _lastActive;
-            private readonly ActiveList _parent;
 
-            public int Counter { get; private set; } = -1;
-
-            public ActiveEnumerator(List<Entity> collection, int lastActive, ActiveList parent)
-            {
-                _collection = collection;
-                _lastActive = lastActive;
-                _parent = parent;
-            }
-            
-            public bool MoveNext()
-            {
-                return (++Counter <= _lastActive);
-            }
-
-            public void Reset()
-            {
-                Counter = -1;
-            }
-
-            public Entity Current
-            {
-                get
-                {
-                    try
-                    {
-                        if (Counter > _lastActive)
-                            throw new IndexOutOfRangeException(
-                                $"Tried to traverse to inactive, {Counter} > {_lastActive}");
-                        return _collection[Counter];
-                    }
-                    catch (IndexOutOfRangeException e)
-                    {
-                        throw new InvalidOperationException(e.Message);
-                    }
-                }
-            }
-
-            object IEnumerator.Current => Current;
-
-            public void Dispose()
-            {
-                _parent.DoneEnumerating();
-            }
-        }
-
-        private readonly List<ActiveEnumerator> _enumerators = new List<ActiveEnumerator>();
-
-        private void DoneEnumerating()
-        {
-            var length = _enumerators.Count - 1;
-            _enumerators.RemoveAt(length);
-            if (0 >= length)
-                Compress();
-        }
-
+        private int _counter; 
         public IEnumerator<Entity> GetEnumerator()
         {
-            var enumerator = new ActiveEnumerator(_collection, _lastActive, this);
-            _enumerators.Add(enumerator);
-            return enumerator;
+            for (var i = 0; i <=_lastActive; i++)
+            {
+                _counter = i;
+                yield return _collection[_counter];
+            }
+            Compress();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -137,12 +79,9 @@ namespace AsteroidsEngine
             _deadPool.Add(index);
         }
 
-        public void DeactivateCurrent(int deep = 0)
+        public void DeactivateCurrent()
         {
-            var length = _enumerators.Count - 1;
-            if (deep > length)
-                throw new IndexOutOfRangeException("tried to deactivate too deep");
-            Deactivate(_enumerators[length - deep].Counter);
+            Deactivate(_counter);
         }
         
         public void DeactivateAll()
